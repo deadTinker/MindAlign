@@ -3,9 +3,9 @@ const User = require("../models/User");
 
 const signup = async (req, res) => {
   try{
-    const {username, email, password} = req.body;
+    const {name, email, password} = req.body;
 
-    if (!username || !email || !password){
+    if (!name || !email || !password){
       return res.status(400).json({
         message: "Username, Email and password are required"
       });
@@ -22,7 +22,7 @@ const signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      username,
+      name,
       email,
       password: hashedPassword
     });
@@ -31,7 +31,7 @@ const signup = async (req, res) => {
       message:"Signup successful, New User created",
       user: {
         id: user._id,
-        username: user.username,
+        name: user.name,
         email: user.email
       }
     });
