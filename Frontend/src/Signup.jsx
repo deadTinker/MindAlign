@@ -183,7 +183,7 @@ function Signup() {
 
           {/* Signup Button */}
           <button
-            onClick={() => {handleSignup} }
+            onClick= {handleSignup}
             className="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-semibold shadow-lg shadow-indigo-600/20 transition-all duration-200 hover:bg-indigo-500 hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:translate-y-0"
           >
             Create Account
