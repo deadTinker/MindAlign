@@ -1,0 +1,8 @@
+we can activate python envirment using this
+    In backend/nlp folder from
+    source venv/Scripts/activate
+
+
+    downloads in NLP 
+     pip install torch
+     pip install transformers
