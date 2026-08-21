@@ -1,0 +1,2 @@
+for donwloading NLP setup requirements
+pip install -r requirements.txt

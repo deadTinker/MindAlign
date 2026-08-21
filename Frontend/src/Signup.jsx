@@ -9,8 +9,48 @@ function Signup() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
+  const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match, Try again")
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      console.log("Signup was successful:", data);
+      alert("Account created successfully!");
+    
+    
+    } catch (error) {
+      console.error("Signup error: ", error);
+      alert("Couldn't connect to the server");
+    }
+  };
+
+
   return (
-    <div className="min-h-screen relative overflow-hidden bg-slate-950 flex items-center justify-center px-4">
+    <div className="min-h-screen relative overflow-hidden bg-slate-950 flex items-center justify-center px-4 py-10">
 
       {/* Background Glow */}
       <div className="absolute top-[-150px] left-[-150px] w-[400px] h-[400px] bg-indigo-600/30 rounded-full blur-3xl"></div>
@@ -37,7 +77,7 @@ function Signup() {
         <div className="bg-white/[0.07] backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
 
           {/* Heading */}
-          <div className="mb-7">
+          <div className="mb-7 text-center">
 
             <h2 className="text-2xl font-semibold text-white">
               Create Account
@@ -143,7 +183,7 @@ function Signup() {
 
           {/* Signup Button */}
           <button
-            onClick={() => console.log(name, email, password, confirmPassword)}
+            onClick= {handleSignup}
             className="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-semibold shadow-lg shadow-indigo-600/20 transition-all duration-200 hover:bg-indigo-500 hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:translate-y-0"
           >
             Create Account
