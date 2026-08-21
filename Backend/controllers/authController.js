@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const signup = async (req, res) => {
@@ -7,7 +8,7 @@ const signup = async (req, res) => {
 
     if (!name || !email || !password){
       return res.status(400).json({
-        message: "Username, Email and password are required"
+        message: "Username, Email and Password are required"
       });
     }
 
@@ -40,11 +41,61 @@ const signup = async (req, res) => {
     console.error(error);
 
     res.status(500).json({
-      message: "There is an error in the Server"
+      message: "There was an error in the Server"
     });
   }
 };
 
+
+const login = async (req, res) => {
+
+  try{
+    const {email, password} = req.body;
+
+    if (!email || !password){
+      return res.status(400).json({
+        message: "Email and Password are required"
+      });
+    }
+
+    const existingUser = await User.findOne({email});
+
+    if (!existingUser){
+      return res.status(400).json({
+        message: "User does not exist with this email"
+      });
+    }
+
+    const pswdMatch = await bcrypt.compare(password, existingUser.password);
+
+    if (pswdMatch){
+      const token = jwt.sign(
+        { userId: existingUser._id },
+        process.env.JWT_SECRET,
+        {expiresIn: "1h"}
+      );
+
+      return res.status(200).json({
+        message: "Login successful",
+        token: token
+      });
+    } else {
+      return res.status(401).json({
+        message: "Invalid password"
+      });
+    }
+
+  } catch(error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "There was an error in server"
+    });
+  }
+};
+
+
 module.exports = {
-  signup
+  signup,
+  login
 };
