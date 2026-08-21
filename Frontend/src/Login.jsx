@@ -6,6 +6,42 @@ function Login() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
 
+  const handleLogin = async () => {
+    try{
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok){
+        alert(data.message);
+        return;
+      }
+
+      console.log("Login successful:", data);
+
+      localStorage.setItem("token", data.token);
+
+      alert("Login successful"); 
+
+    } catch (error){
+      console.error("Login error:", error);
+
+      alert("Couldn't connect to server");
+    }
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-slate-950 flex items-center justify-center px-4">
 
@@ -94,7 +130,7 @@ function Login() {
 
           {/* Login Button */}
           <button
-            onClick={() => console.log(email, password)}
+            onClick={handleLogin}
             className="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-semibold shadow-lg shadow-indigo-600/20 transition-all duration-200 hover:bg-indigo-500 hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:translate-y-0"
           >
             Login
