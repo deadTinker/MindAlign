@@ -70,7 +70,7 @@ function Login() {
         <div className="bg-white/[0.07] backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
 
           {/* Heading */}
-          <div className="mb-7">
+          <div className="mb-7 text-center">
 
             <h2 className="text-2xl font-semibold text-white">
               Welcome Back

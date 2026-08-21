@@ -50,7 +50,7 @@ function Signup() {
 
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-slate-950 flex items-center justify-center px-4">
+    <div className="min-h-screen relative overflow-hidden bg-slate-950 flex items-center justify-center px-4 py-10">
 
       {/* Background Glow */}
       <div className="absolute top-[-150px] left-[-150px] w-[400px] h-[400px] bg-indigo-600/30 rounded-full blur-3xl"></div>
@@ -77,7 +77,7 @@ function Signup() {
         <div className="bg-white/[0.07] backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
 
           {/* Heading */}
-          <div className="mb-7">
+          <div className="mb-7 text-center">
 
             <h2 className="text-2xl font-semibold text-white">
               Create Account
