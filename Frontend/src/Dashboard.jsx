@@ -1,6 +1,49 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
 
 function Dashboard() {
+  const navigate = useNavigate()
+
+  const [assessment, setAssessment] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchLatestAssessment = async () => {
+      try {
+        const token = localStorage.getItem('token')
+
+        if (!token) {
+          setLoading(false)
+          return
+        }
+
+        const response = await fetch(
+          'http://localhost:5000/api/assessment/latest',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        if (!response.ok) {
+          setLoading(false)
+          return
+        }
+
+        const data = await response.json()
+        setAssessment(data.assessment)
+      } catch (error) {
+        console.error('Error fetching assessment:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchLatestAssessment()
+  }, [])
+
   return (
     <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
 
@@ -44,33 +87,91 @@ function Dashboard() {
                 Burnout Risk Score
               </h2>
 
-              <p className="text-slate-400 mt-3 max-w-xl">
-                Please take the burnout assessment to understand your
-                current risk level and receive personalized insights.
-              </p>
+              {loading ? (
+                <p className="text-slate-400 mt-3">
+                  Loading your latest assessment...
+                </p>
+              ) : assessment ? (
+                <>
+                  <p className="text-slate-400 mt-3 max-w-xl">
+                    Your latest assessment indicates a{' '}
+                    <span className="text-indigo-400 font-medium">
+                      {assessment.riskLevel.toLowerCase()}
+                    </span>{' '}
+                    level of burnout-related risk.
+                  </p>
 
-              <button
-                className="mt-6 px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold transition-all duration-200 hover:bg-indigo-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/20"
-              >
-                Take Assessment
-              </button>
+                  <button
+                    onClick={() => navigate('/summary')}
+                    className="mt-6 px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold transition-all duration-200 hover:bg-indigo-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/20"
+                  >
+                    View Results
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-slate-400 mt-3 max-w-xl">
+                    Please take the burnout assessment to understand your
+                    current risk level and receive personalized insights.
+                  </p>
+
+                  <button
+                    onClick={() => navigate('/assessment')}
+                    className="mt-6 px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold transition-all duration-200 hover:bg-indigo-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/20"
+                  >
+                    Take Assessment
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Score */}
             <div className="flex items-center justify-center">
-              <div className="w-32 h-32 rounded-full border-8 border-slate-700 flex items-center justify-center bg-slate-900/60 shadow-lg">
 
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-slate-400">
-                    --
-                  </p>
-
-                  <p className="text-xs text-slate-500 mt-1">
-                    No Score
+              {loading ? (
+                <div className="w-32 h-32 rounded-full border-8 border-slate-700 flex items-center justify-center bg-slate-900/60 shadow-lg">
+                  <p className="text-sm text-slate-500">
+                    Loading
                   </p>
                 </div>
+              ) : assessment ? (
+                <div className="flex flex-col items-center">
 
-              </div>
+                  <div className="w-32 h-32 rounded-full border-8 border-indigo-500/30 flex items-center justify-center bg-slate-900/60 shadow-lg">
+
+                    <div className="text-center">
+                      <p className="text-3xl font-bold text-white">
+                        {assessment.score}
+                      </p>
+
+                      <p className="text-xs text-slate-500 mt-1">
+                        / {assessment.total}
+                      </p>
+                    </div>
+
+                  </div>
+
+                  <p className="mt-3 text-sm font-medium text-indigo-400">
+                    {assessment.riskLevel} Risk
+                  </p>
+
+                </div>
+              ) : (
+                <div className="w-32 h-32 rounded-full border-8 border-slate-700 flex items-center justify-center bg-slate-900/60 shadow-lg">
+
+                  <div className="text-center">
+                    <p className="text-3xl font-bold text-slate-400">
+                      --
+                    </p>
+
+                    <p className="text-xs text-slate-500 mt-1">
+                      No Score
+                    </p>
+                  </div>
+
+                </div>
+              )}
+
             </div>
 
           </div>
@@ -103,14 +204,12 @@ function Dashboard() {
             </h2>
 
             <ul className="mt-4 space-y-3 text-slate-400">
-
               <li>• Excessive workload or academic pressure</li>
               <li>• Lack of adequate rest and recovery</li>
               <li>• Long-term or unmanaged stress</li>
               <li>• Lack of control over responsibilities</li>
               <li>• Lack of support from others</li>
               <li>• Poor work-life or study-life balance</li>
-
             </ul>
 
           </section>
@@ -123,14 +222,12 @@ function Dashboard() {
             </h2>
 
             <ul className="mt-4 space-y-3 text-slate-400">
-
               <li>• Physical and emotional exhaustion</li>
               <li>• Difficulty concentrating</li>
               <li>• Reduced motivation</li>
               <li>• Decreased productivity</li>
               <li>• Irritability and emotional distress</li>
               <li>• Feeling overwhelmed or detached</li>
-
             </ul>
 
           </section>
@@ -143,14 +240,12 @@ function Dashboard() {
             </h2>
 
             <ul className="mt-4 space-y-3 text-slate-400">
-
               <li>• Take regular breaks and get adequate rest</li>
               <li>• Maintain a healthy sleep schedule</li>
               <li>• Set realistic goals and manage your workload</li>
               <li>• Maintain a healthy balance between work, study, and personal life</li>
               <li>• Stay physically active and maintain healthy habits</li>
               <li>• Talk to trusted people when you're feeling overwhelmed</li>
-
             </ul>
 
           </section>

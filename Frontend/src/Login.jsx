@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
   const handleLogin = async () => {
     try{
@@ -29,11 +30,11 @@ function Login() {
         return;
       }
 
-      console.log("Login successful:", data);
+      console.log("Login successful:", data)
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", data.token)
 
-      alert("Login successful"); 
+      navigate("/dashboard")
 
     } catch (error){
       console.error("Login error:", error);

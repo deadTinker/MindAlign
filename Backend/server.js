@@ -6,6 +6,9 @@ require("dotenv").config();
 
 const authenticationRoutes = require("./routes/auth");
 
+const assessmentRoutes = require("./routes/assessment");
+
+
 
 const app = express();
 
@@ -13,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authenticationRoutes);
+app.use("/api/assessment", assessmentRoutes);
 
 
 

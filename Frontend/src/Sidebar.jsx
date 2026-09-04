@@ -1,7 +1,14 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 function Sidebar() {
   const location = useLocation()
+
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+  localStorage.removeItem('token')
+  navigate('/login')
+  }
 
   const isActive = (path) => location.pathname === path
 
@@ -148,7 +155,8 @@ function Sidebar() {
       <div className="mt-auto pt-6">
 
         <button
-          className="group w-full flex items-center px-4 py-3.5 rounded-2xl text-slate-500 font-medium transition-all duration-300 hover:bg-red-500/10 hover:text-red-400"
+        onClick={handleLogout}
+        className="group w-full flex items-center px-4 py-3.5 rounded-2xl text-slate-500 font-medium transition-all duration-300 hover:bg-red-500/10 hover:text-red-400"
         >
           <span className="transition-transform duration-300 group-hover:translate-x-1">
             Logout

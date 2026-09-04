@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Signup() {
   const [name, setName] = useState('')
@@ -8,6 +8,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const navigate = useNavigate()
 
   const handleSignup = async () => {
     if (password !== confirmPassword) {
@@ -38,8 +39,11 @@ function Signup() {
         return;
       }
 
-      console.log("Signup was successful:", data);
-      alert("Account created successfully!");
+      console.log("Signup was successful:", data)
+
+      localStorage.setItem("token", data.token)
+
+      navigate("/dashboard")
     
     
     } catch (error) {

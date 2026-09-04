@@ -28,14 +28,22 @@ const signup = async (req, res) => {
       password: hashedPassword
     });
 
+    const token = jwt.sign({ 
+    userId: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+    );
+
     res.status(201).json({
-      message: "Signup successful, New User created",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      }
-    });
+    message: "Signup successful, New User created",
+    token,
+    user: {
+    id: user._id,
+    name: user.name,
+    email: user.email
+  }
+  });
+  
   } catch (error) {
     console.error(error);
 
