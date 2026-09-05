@@ -1,0 +1,15 @@
+.env file is added in .gitignore to hide sensitive details like JWT Key and Mongo URI login details
+
+To setup one yourself, follow this:-
+
+1. Go to backend folder if not already in (command is "cd backend" without the "")
+
+2. Create a new file named .env
+
+3. Paste the following:-
+
+MONGO_URI="Your details"
+
+PORT=5000
+
+JWT_SECRET=Your key
