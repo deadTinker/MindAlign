@@ -1,0 +1,21 @@
+ML SETUP
+
+ML libraries:
+- pandas
+- scikit-learn
+- joblib
+
+Install:
+pip install pandas scikit-learn joblib
+
+pip install imbalanced-learn
+
+
+
+ML code is in:
+Backend/ML/
+
+ML uses:
+- Logistic Regression
+- Random Forest
+
