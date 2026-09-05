@@ -109,10 +109,11 @@ class MentalHealthAnalyzer:
 
              result[f"{label}_mean"] = sum(values)/len(values)
              result[f"{label}_max"]  = max(values)
+             result[f"{label}_min"] = min(values)
 
 
-         return  result 
 
+         return  result
 
 
 

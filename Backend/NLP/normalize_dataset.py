@@ -20,3 +20,10 @@ for column in columns_to_normalize:
 # Save normalized dataset
 df.to_csv("student_burnout_normalized.csv",index= False)
 
+# creating dummies cols of Gender
+df = pd.get_dummies(df, columns=["gender"],dtype =int)
+
+# print(df["gender"].unique())
+print(df.head())
+
+
