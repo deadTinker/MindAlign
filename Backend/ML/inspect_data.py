@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load dataset
-df = pd.read_csv("Backend/NLP/student_burnout_normalized.csv")
+df = pd.read_csv("../NLP/student_burnout_normalized.csv")
 
 print("\n========== DATASET INFO ==========")
 
@@ -31,3 +31,20 @@ print(df.select_dtypes(exclude="number").columns.tolist())
 
 print("\n========== FIRST 5 ROWS ==========")
 print(df.head())
+
+print("\n========== FEATURE STATISTICS ==========")
+
+features = [
+    "study_hours_per_day",
+    "exam_pressure",
+    "academic_performance",
+    "sleep_hours",
+    "physical_activity",
+    "social_support",
+    "screen_time",
+    "internet_usage",
+    "financial_stress",
+    "family_expectation"
+]
+
+print(df[features].agg(["min", "max", "mean"]).T)

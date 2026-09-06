@@ -1,2 +1,4 @@
 for donwloading NLP setup requirements
+
+run this command inside NLP folder:-
 pip install -r requirements.txt

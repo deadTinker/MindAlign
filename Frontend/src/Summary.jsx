@@ -53,7 +53,9 @@ function Summary() {
         <Sidebar />
 
         <main className="ml-64 min-h-screen flex items-center justify-center">
-          <p className="text-slate-400">Loading your results...</p>
+          <p className="text-slate-400">
+            Loading your results...
+          </p>
         </main>
       </div>
     );
@@ -86,25 +88,44 @@ function Summary() {
     );
   }
 
-  const score = assessment.score;
-  const total = assessment.total;
-  const percentage = Math.round((score / total) * 100);
+  if (!assessment) {
+    return null;
+  }
+
+  // Actual ML result
+  const burnoutProbability =
+    (assessment.burnoutProbability ?? 0) * 100;
+
+  const riskLevel = assessment.riskLevel || "Pending";
+
+  const stress =
+    (assessment.nlpScores?.stress ?? 0) * 100;
+
+  const anxiety =
+    (assessment.nlpScores?.anxiety ?? 0) * 100;
+
+  const depression =
+    (assessment.nlpScores?.depression ?? 0) * 100;
 
   let riskDescription;
 
-  if (assessment.riskLevel === "Low") {
+  if (riskLevel === "Low") {
     riskDescription =
-      "Your responses indicate relatively low levels of burnout-related concerns.";
-  } else if (assessment.riskLevel === "Moderate") {
+      "Your assessment indicates a relatively low level of burnout-related risk.";
+  } else if (riskLevel === "Medium") {
     riskDescription =
-      "Your responses indicate some burnout-related concerns that may be worth paying attention to.";
+      "Your assessment indicates a moderate level of burnout-related risk. Some areas of your current routine may deserve attention.";
+  } else if (riskLevel === "High") {
+    riskDescription =
+      "Your assessment indicates a higher level of burnout-related risk. Consider reviewing your workload, recovery, and sources of stress.";
   } else {
     riskDescription =
-      "Your responses indicate a higher level of burnout-related concerns. Consider taking steps to reduce stress and workload.";
+      "Your assessment is still being processed.";
   }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
+
       {/* Background effects */}
       <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
 
@@ -130,22 +151,24 @@ function Summary() {
             </p>
           </div>
 
-          {/* Score */}
+          {/* Burnout Result */}
           <section className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8 md:p-10 mb-6">
+
             <div className="grid md:grid-cols-2 gap-8 items-center">
 
+              {/* Probability */}
               <div>
                 <p className="text-slate-400 text-sm mb-3">
-                  Burnout Risk Score
+                  Burnout Probability
                 </p>
 
                 <div className="flex items-baseline gap-2">
                   <span className="text-6xl font-bold">
-                    {score}
+                    {burnoutProbability.toFixed(1)}
                   </span>
 
-                  <span className="text-xl text-slate-500">
-                    / {total}
+                  <span className="text-2xl text-slate-500">
+                    %
                   </span>
                 </div>
 
@@ -154,45 +177,130 @@ function Summary() {
                 </p>
               </div>
 
+              {/* Risk */}
               <div className="flex flex-col items-center justify-center">
-                <div className="w-40 h-40 rounded-full border-8 border-indigo-500/20 flex items-center justify-center relative">
+
+                <div className="w-40 h-40 rounded-full border-8 border-indigo-500/20 flex items-center justify-center">
                   <div className="text-center">
                     <p className="text-4xl font-bold">
-                      {percentage}%
+                      {burnoutProbability.toFixed(0)}%
                     </p>
 
                     <p className="text-xs text-slate-500 mt-1">
-                      Score
+                      Risk
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-5 px-5 py-2 rounded-full bg-indigo-500/10 border border-indigo-400/20">
                   <span className="text-indigo-400 font-semibold">
-                    {assessment.riskLevel} Risk
+                    {riskLevel} Risk
                   </span>
                 </div>
+
               </div>
 
             </div>
           </section>
 
+          {/* Mental Health Indicators */}
+          <section className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8 mb-6">
+
+            <h2 className="text-xl font-semibold mb-6">
+              Mental Health Indicators
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-4">
+
+              {/* Stress */}
+              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
+                <p className="text-slate-400 text-sm mb-2">
+                  Stress
+                </p>
+
+                <p className="text-3xl font-bold">
+                  {stress.toFixed(1)}%
+                </p>
+
+                <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-indigo-500 rounded-full"
+                    style={{
+                      width: `${Math.min(stress, 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Anxiety */}
+              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
+                <p className="text-slate-400 text-sm mb-2">
+                  Anxiety
+                </p>
+
+                <p className="text-3xl font-bold">
+                  {anxiety.toFixed(1)}%
+                </p>
+
+                <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-indigo-500 rounded-full"
+                    style={{
+                      width: `${Math.min(anxiety, 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Depression */}
+              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
+                <p className="text-slate-400 text-sm mb-2">
+                  Depression
+                </p>
+
+                <p className="text-3xl font-bold">
+                  {depression.toFixed(1)}%
+                </p>
+
+                <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-indigo-500 rounded-full"
+                    style={{
+                      width: `${Math.min(depression, 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+            </div>
+
+            <p className="text-xs text-slate-500 mt-5">
+              These indicators are outputs from the text-response analysis
+              and are intended for awareness rather than clinical diagnosis.
+            </p>
+
+          </section>
+
           {/* Interpretation */}
           <section className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8 mb-6">
+
             <h2 className="text-xl font-semibold mb-3">
               Understanding Your Result
             </h2>
 
             <p className="text-slate-400 leading-7">
-              This result is based on your responses to the MindAlign
-              burnout awareness assessment. It is intended to help you
-              reflect on your current situation and identify areas that
-              may deserve attention.
+              Your burnout probability is generated using the structured
+              assessment responses together with the stress, anxiety, and
+              depression indicators obtained from your text responses.
+              The final risk level is produced by the machine learning
+              models used by MindAlign.
             </p>
+
           </section>
 
           {/* Recommendations */}
           <section className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8 mb-6">
+
             <h2 className="text-xl font-semibold mb-6">
               What You Can Do
             </h2>
@@ -244,10 +352,12 @@ function Summary() {
               </div>
 
             </div>
+
           </section>
 
           {/* Actions */}
           <div className="flex flex-wrap gap-4">
+
             <button
               onClick={() => navigate("/dashboard")}
               className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition font-semibold"
@@ -261,6 +371,7 @@ function Summary() {
             >
               Retake Assessment
             </button>
+
           </div>
 
           <p className="text-center text-xs text-slate-600 mt-8">
