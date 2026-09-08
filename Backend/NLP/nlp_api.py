@@ -18,12 +18,12 @@ def analyze():
                 "message": "responses must be a non-empty list"
             }), 400
 
-        scores = analyzer.mean_max_Scores(responses)
+        scores = analyzer.aggregate_Scores(responses)
 
         return jsonify({
-            "stress": scores["stress_mean"],
-            "anxiety": scores["anxiety_mean"],
-            "depression": scores["depression_mean"]
+            "stress": scores["stress_median"],
+            "anxiety": scores["anxiety_median"],
+            "depression": scores["depression_median"]
         })
 
     except Exception as error:

@@ -1,7 +1,9 @@
 
 from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
+from statistics import median
 import torch
+
 
 #  form  Mental Health Model
     # Gettingn these output
@@ -110,8 +112,7 @@ class MentalHealthAnalyzer:
              result[f"{label}_mean"] = sum(values)/len(values)
              result[f"{label}_max"]  = max(values)
              result[f"{label}_min"] = min(values)
-
-
+             result[f"{label}_median"] = median(values)
 
          return  result
 
@@ -120,8 +121,8 @@ class MentalHealthAnalyzer:
    # pass all Qn responses with Qns
    #  return final mean , max values score.
     
-     def mean_max_Scores(self , user_responses): 
+     def aggregate_Scores(self , user_responses): 
 
         individual_Each_Qn_user_response_score = self.analyze_responses(user_responses)
-        max_mean_score = self.aggregate_scores(individual_Each_Qn_user_response_score)
-        return max_mean_score
+        final_scores = self.aggregate_scores(individual_Each_Qn_user_response_score)
+        return final_scores
