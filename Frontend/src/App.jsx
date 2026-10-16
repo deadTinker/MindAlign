@@ -11,7 +11,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 
@@ -52,6 +51,15 @@ function App() {
         />
 
         <Route
+          path="/assessment/text"
+          element={
+            <ProtectedRoute>
+              <Assessment />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/summary"
           element={
             <ProtectedRoute>
@@ -61,7 +69,6 @@ function App() {
         />
 
         <Route path="*" element={<Login />} />
-
       </Routes>
     </BrowserRouter>
   )

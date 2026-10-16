@@ -69,6 +69,25 @@ function Dashboard() {
         )
       : 0
 
+  const optionAssessmentCompleted =
+    assessment?.optionAssessmentCompleted === true
+  const textAssessmentCompleted =
+    assessment?.textAssessmentCompleted === true
+  const bothAssessmentsCompleted =
+    optionAssessmentCompleted && textAssessmentCompleted
+  const resultsReady =
+    bothAssessmentsCompleted &&
+    assessment?.riskLevel &&
+    assessment.riskLevel !== 'Pending' &&
+    assessment.burnoutProbability !== null &&
+    assessment.burnoutProbability !== undefined
+  const missingAssessmentPath = !optionAssessmentCompleted
+    ? '/assessment/option'
+    : '/assessment/text'
+  const missingAssessmentLabel = !optionAssessmentCompleted
+    ? 'option-based'
+    : 'text-based'
+
   const infoCards = [
     {
       icon: Brain,
@@ -216,23 +235,22 @@ function Dashboard() {
                 <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
                   {loading
                     ? 'Checking in with your progress'
-                    : assessment
+                    : resultsReady
                       ? 'Your latest assessment'
-                      : 'Start with a check-in'}
+                      : assessment
+                        ? 'Your assessment progress'
+                        : 'Start with a check-in'}
                 </h2>
 
                 {loading ? (
                   <p className="mt-4 text-slate-400 leading-7">
                     Loading your latest assessment. Just a moment...
                   </p>
-                ) : assessment ? (
+                ) : resultsReady ? (
                   <>
                     <p className="mt-4 text-slate-400 leading-7">
-                      Your latest recorded score is{' '}
-                      <span className="text-white font-semibold">
-                        {assessment.score} / {assessment.total}
-                      </span>
-                      . Take a moment to reflect on how you've been feeling.
+                      Both assessments are complete and your results are ready.
+                      Take a moment to reflect on how you've been feeling.
                     </p>
 
                     <div className="flex flex-wrap items-center gap-3 mt-7">
@@ -248,7 +266,7 @@ function Dashboard() {
                       </button>
 
                       <button
-                        onClick={() => navigate('/assessment')}
+                        onClick={() => navigate('/assessment/option')}
                         className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/10 bg-white/[0.03] text-slate-300 font-medium text-sm transition-all duration-300 hover:bg-white/[0.07] hover:border-cyan-400/20 hover:text-white"
                       >
                         Retake Assessment
@@ -258,16 +276,23 @@ function Dashboard() {
                 ) : (
                   <>
                     <p className="mt-4 text-slate-400 leading-7">
-                      You haven't completed an assessment yet. Take a moment
-                      to reflect on your current experiences and get started.
+                      {assessment
+                        ? bothAssessmentsCompleted
+                          ? 'Both assessments are complete, but your analysis is still processing. Check back shortly.'
+                          : `Your ${optionAssessmentCompleted ? 'option-based' : 'text-based'} assessment is recorded. Complete the ${missingAssessmentLabel} assessment to receive your results.`
+                        : "You haven't completed an assessment yet. Complete both the option-based and text-based assessments to receive your results."}
                     </p>
 
                     <button
-                      onClick={() => navigate('/assessment')}
+                      onClick={() => navigate(assessment ? (bothAssessmentsCompleted ? '/summary' : missingAssessmentPath) : '/assessment/option')}
                       className="group/button inline-flex items-center gap-2 mt-7 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold text-sm shadow-lg shadow-blue-950/40 transition-all duration-300 hover:shadow-cyan-500/20 hover:shadow-xl hover:-translate-y-0.5"
                     >
                       <ClipboardCheck size={17} />
-                      Take Your First Assessment
+                      {assessment
+                        ? bothAssessmentsCompleted
+                          ? 'Check Results'
+                          : `Complete ${missingAssessmentLabel} Assessment`
+                        : 'Start Option-Based Assessment'}
                       <ArrowUpRight
                         size={17}
                         className="transition-transform duration-300 group-hover/button:translate-x-0.5 group-hover/button:-translate-y-0.5"
@@ -290,7 +315,7 @@ function Dashboard() {
                     <div className="w-9 h-9 border-2 border-cyan-400/20 border-t-cyan-400 rounded-full animate-spin" />
                     <span className="text-xs text-slate-500">Loading score</span>
                   </div>
-                ) : assessment ? (
+                ) : resultsReady ? (
                   <div className="flex flex-col items-center">
 
                     <div
@@ -324,10 +349,20 @@ function Dashboard() {
 
                   </div>
                 ) : (
-                  <div className="w-44 h-44 rounded-full border border-dashed border-cyan-400/20 bg-cyan-400/[0.025] flex flex-col items-center justify-center transition-all duration-500 hover:border-cyan-400/40 hover:bg-cyan-400/[0.05]">
-                    <Brain size={34} className="text-cyan-300/70 mb-3 animate-[gentleFloat_4s_ease-in-out_infinite]" />
-                    <span className="text-sm font-medium text-slate-300">Your journey</span>
-                    <span className="text-xs text-slate-600 mt-1">Starts here</span>
+                  <div className="w-44 h-44 rounded-full border border-dashed border-cyan-400/20 bg-cyan-400/[0.025] flex flex-col items-center justify-center">
+                    <ClipboardCheck size={34} className="text-cyan-300/70 mb-3" />
+                    <span className="text-sm font-medium text-slate-300">
+                      {assessment
+                        ? bothAssessmentsCompleted
+                          ? 'Analyzing'
+                          : 'In progress'
+                        : 'Your journey'}
+                    </span>
+                    <span className="text-xs text-slate-600 mt-1">
+                      {assessment
+                        ? `${Number(optionAssessmentCompleted) + Number(textAssessmentCompleted)} of 2 complete`
+                        : 'Starts here'}
+                    </span>
                   </div>
                 )}
 
@@ -339,7 +374,7 @@ function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-11">
 
             <button
-              onClick={() => navigate('/assessment')}
+              onClick={() => navigate('/assessment/option')}
               className="group text-left rounded-2xl border border-white/[0.08] bg-[#0C1322]/80 p-5 transition-all duration-300 hover:bg-blue-500/[0.06] hover:border-blue-400/25 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/20 animate-[fadeInUp_0.7s_ease-out_both]"
             >
               <div className="flex items-start justify-between">

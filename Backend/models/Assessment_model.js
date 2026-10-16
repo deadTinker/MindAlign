@@ -8,9 +8,10 @@ const assessmentSchema = new mongoose.Schema(
       required: true,
     },
 
+    // Option-based assessment
     answers: {
       type: [Number],
-      required: true,
+      default: undefined,
     },
 
     features: {
@@ -26,17 +27,35 @@ const assessmentSchema = new mongoose.Schema(
           },
         },
       ],
-      required: true,
+      default: undefined,
     },
 
+    // Text-based assessment
+    textResponses: {
+      type: [String],
+      default: undefined,
+    },
+
+    // Track completion of each assessment
+    optionAssessmentCompleted: {
+      type: Boolean,
+      default: false,
+    },
+
+    textAssessmentCompleted: {
+      type: Boolean,
+      default: false,
+    },
+
+    // Final assessment score
     score: {
       type: Number,
-      required: true,
+      default: null,
     },
 
     total: {
       type: Number,
-      required: true,
+      default: null,
     },
 
     nlpScores: {

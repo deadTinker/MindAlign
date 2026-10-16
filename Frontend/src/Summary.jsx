@@ -92,6 +92,99 @@ function Summary() {
     return null;
   }
 
+  // Results are available only after both assessments are complete and analyzed.
+  const optionAssessmentCompleted =
+    assessment.optionAssessmentCompleted === true;
+  const textAssessmentCompleted =
+    assessment.textAssessmentCompleted === true;
+  const resultsReady =
+    optionAssessmentCompleted &&
+    textAssessmentCompleted &&
+    assessment.riskLevel &&
+    assessment.riskLevel !== "Pending" &&
+    assessment.burnoutProbability !== null &&
+    assessment.burnoutProbability !== undefined;
+
+  if (!resultsReady) {
+    const missingAssessment = !optionAssessmentCompleted
+      ? "option"
+      : !textAssessmentCompleted
+        ? "text"
+        : null;
+
+    const nextPath =
+      missingAssessment === "text"
+        ? "/assessment/text"
+        : "/assessment/option";
+
+    const title = missingAssessment
+      ? "Complete both assessments"
+      : "Your results are not ready yet";
+
+    const message = missingAssessment
+      ? `You've completed one assessment. Please complete the ${missingAssessment === "text" ? "text-based" : "option-based"} assessment before viewing your results.`
+      : "Both assessments have been submitted, but the analysis is not complete yet. Please return to your dashboard and check again shortly.";
+
+    return (
+      <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
+        <Sidebar />
+
+        <main className="ml-64 min-h-screen flex items-center justify-center p-6 md:p-10 relative">
+          <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
+
+          <section className="relative max-w-lg w-full text-center rounded-3xl border border-white/10 bg-white/[0.07] p-8 md:p-10">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 8v4" />
+                <path d="M12 16h.01" />
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+            </div>
+
+            <p className="text-cyan-300 text-sm font-medium mb-2">
+              MindAlign Assessment
+            </p>
+            <h1 className="text-2xl md:text-3xl font-bold mb-3">
+              {title}
+            </h1>
+            <p className="text-slate-400 leading-7 mb-7">
+              {message}
+            </p>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              {missingAssessment && (
+                <button
+                  onClick={() => navigate(nextPath)}
+                  className="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition font-semibold"
+                >
+                  Complete {missingAssessment === "text" ? "Text-Based" : "Option-Based"} Assessment
+                </button>
+              )}
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="px-6 py-3 rounded-xl bg-white/[0.06] border border-white/10 hover:bg-white/[0.1] transition font-semibold"
+              >
+                Back to Dashboard
+              </button>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
+
   // Actual ML result
   const burnoutProbability =
     (assessment.burnoutProbability ?? 0) * 100;
