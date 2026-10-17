@@ -49,7 +49,7 @@ function Summary() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white">
+      <div className="min-h-screen bg-[#070B16] text-white">
         <Sidebar />
 
         <main className="ml-64 min-h-screen flex items-center justify-center">
@@ -63,11 +63,11 @@ function Summary() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white">
+      <div className="min-h-screen bg-[#070B16] text-white">
         <Sidebar />
 
         <main className="ml-64 min-h-screen flex items-center justify-center p-6">
-          <div className="max-w-md w-full text-center rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8">
+          <div className="max-w-md w-full text-center rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8">
             <h1 className="text-2xl font-bold mb-3">
               Unable to load results
             </h1>
@@ -78,7 +78,7 @@ function Summary() {
 
             <button
               onClick={() => navigate("/assessment")}
-              className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition font-semibold"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:brightness-110 transition font-semibold"
             >
               Take Assessment
             </button>
@@ -126,12 +126,12 @@ function Summary() {
       : "Both assessments have been submitted, but the analysis is not complete yet. Please return to your dashboard and check again shortly.";
 
     return (
-      <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
+      <div className="min-h-screen bg-[#070B16] text-white relative overflow-hidden">
         <Sidebar />
 
         <main className="ml-64 min-h-screen flex items-center justify-center p-6 md:p-10 relative">
-          <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-blue-600/[0.10] rounded-full blur-3xl pointer-events-none" />
+          <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-violet-600/[0.06] rounded-full blur-3xl pointer-events-none" />
 
           <section className="relative max-w-lg w-full text-center rounded-3xl border border-white/10 bg-white/[0.07] p-8 md:p-10">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
@@ -217,12 +217,12 @@ function Summary() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#070B16] text-white relative overflow-hidden">
 
       {/* Background effects */}
-      <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-blue-600/[0.10] rounded-full blur-3xl pointer-events-none" />
 
-      <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-violet-600/[0.06] rounded-full blur-3xl pointer-events-none" />
 
       <Sidebar />
 
@@ -231,7 +231,7 @@ function Summary() {
 
           {/* Header */}
           <div className="mb-10">
-            <p className="text-indigo-400 text-sm font-medium mb-2">
+            <p className="text-cyan-300 text-sm font-medium mb-2">
               MindAlign Assessment
             </p>
 
@@ -245,7 +245,7 @@ function Summary() {
           </div>
 
           {/* Burnout Result */}
-          <section className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8 md:p-10 mb-6">
+          <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8 md:p-10 mb-6">
 
             <div className="grid md:grid-cols-2 gap-8 items-center">
 
@@ -273,20 +273,24 @@ function Summary() {
               {/* Risk */}
               <div className="flex flex-col items-center justify-center">
 
-                <div className="w-40 h-40 rounded-full border-8 border-indigo-500/20 flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-4xl font-bold">
-                      {burnoutProbability.toFixed(0)}%
-                    </p>
-
-                    <p className="text-xs text-slate-500 mt-1">
-                      Risk
-                    </p>
-                  </div>
+                <div
+                  className="w-40 h-40 rounded-full flex items-center justify-center shadow-[0_0_45px_rgba(34,211,238,0.10)]"
+                  style={{
+                    background: `conic-gradient(from 220deg, #22d3ee 0deg ${Math.min(Math.max(burnoutProbability, 0), 100) * 3.6}deg, rgba(255,255,255,0.08) ${Math.min(Math.max(burnoutProbability, 0), 100) * 3.6}deg 360deg)`,
+                  }}
+                >
+                  <div className="w-[calc(100%-12px)] h-[calc(100%-12px)] rounded-full bg-[#0D1424] flex flex-col items-center justify-center text-center">
+  <p className="text-4xl font-bold leading-none">
+    {burnoutProbability.toFixed(0)}%
+  </p>
+  <p className="mt-2 text-xs text-slate-400">
+    Risk
+  </p>
+</div>
                 </div>
 
-                <div className="mt-5 px-5 py-2 rounded-full bg-indigo-500/10 border border-indigo-400/20">
-                  <span className="text-indigo-400 font-semibold">
+                <div className="mt-5 px-5 py-2 rounded-full bg-cyan-400/[0.08] border border-cyan-400/20">
+                  <span className="text-cyan-300 font-semibold">
                     {riskLevel} Risk
                   </span>
                 </div>
@@ -297,7 +301,7 @@ function Summary() {
           </section>
 
           {/* Mental Health Indicators */}
-          <section className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8 mb-6">
+          <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8 mb-6">
 
             <h2 className="text-xl font-semibold mb-6">
               Mental Health Indicators
@@ -306,7 +310,7 @@ function Summary() {
             <div className="grid md:grid-cols-3 gap-4">
 
               {/* Stress */}
-              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
+              <div className="rounded-2xl bg-white/[0.035] border border-cyan-400/15 p-5 transition-colors hover:bg-white/[0.05]">
                 <p className="text-slate-400 text-sm mb-2">
                   Stress
                 </p>
@@ -317,7 +321,7 @@ function Summary() {
 
                 <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-indigo-500 rounded-full"
+                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-300 rounded-full"
                     style={{
                       width: `${Math.min(stress, 100)}%`,
                     }}
@@ -326,7 +330,7 @@ function Summary() {
               </div>
 
               {/* Anxiety */}
-              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
+              <div className="rounded-2xl bg-white/[0.035] border border-blue-400/15 p-5 transition-colors hover:bg-white/[0.05]">
                 <p className="text-slate-400 text-sm mb-2">
                   Anxiety
                 </p>
@@ -337,7 +341,7 @@ function Summary() {
 
                 <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-indigo-500 rounded-full"
+                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-300 rounded-full"
                     style={{
                       width: `${Math.min(anxiety, 100)}%`,
                     }}
@@ -346,7 +350,7 @@ function Summary() {
               </div>
 
               {/* Depression */}
-              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
+              <div className="rounded-2xl bg-white/[0.035] border border-violet-400/15 p-5 transition-colors hover:bg-white/[0.05]">
                 <p className="text-slate-400 text-sm mb-2">
                   Depression
                 </p>
@@ -357,7 +361,7 @@ function Summary() {
 
                 <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-indigo-500 rounded-full"
+                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-300 rounded-full"
                     style={{
                       width: `${Math.min(depression, 100)}%`,
                     }}
@@ -375,7 +379,7 @@ function Summary() {
           </section>
 
           {/* Interpretation */}
-          <section className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8 mb-6">
+          <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8 mb-6">
 
             <h2 className="text-xl font-semibold mb-3">
               Understanding Your Result
@@ -392,7 +396,7 @@ function Summary() {
           </section>
 
           {/* Recommendations */}
-          <section className="rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-8 mb-6">
+          <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8 mb-6">
 
             <h2 className="text-xl font-semibold mb-6">
               What You Can Do
@@ -453,7 +457,7 @@ function Summary() {
 
             <button
               onClick={() => navigate("/dashboard")}
-              className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition font-semibold"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:brightness-110 transition font-semibold"
             >
               Back to Dashboard
             </button>

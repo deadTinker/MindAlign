@@ -212,12 +212,12 @@ function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#070B16] text-white relative overflow-hidden">
 
       {/* Background Glows */}
-      <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-blue-600/[0.10] rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-violet-600/[0.06] rounded-full blur-3xl pointer-events-none"></div>
 
       <Sidebar />
 
@@ -225,7 +225,7 @@ function Profile() {
 
         {/* Header */}
         <div className="mb-8">
-          <p className="text-indigo-400 text-sm font-medium mb-2">
+          <p className="text-cyan-300 text-sm font-medium mb-2">
             Account Settings
           </p>
 
@@ -239,14 +239,14 @@ function Profile() {
         </div>
 
         {/* Profile Card */}
-        <section className="max-w-5xl rounded-3xl border border-white/10 bg-white/[0.07] backdrop-blur-xl p-6 md:p-8 shadow-2xl">
+        <section className="max-w-5xl rounded-3xl border border-white/10 bg-[#0D1424]/90 backdrop-blur-xl p-6 md:p-8 shadow-2xl">
 
           {/* Profile Information */}
           <div className="flex flex-col md:flex-row md:items-center gap-6">
 
             {/* Profile Image */}
             <div className="relative">
-              <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-indigo-500/20 bg-slate-900 shadow-xl flex items-center justify-center">
+              <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-cyan-400/20 bg-[#0D1424] shadow-xl flex items-center justify-center">
 
                 <img
                   src="/favicon.svg"
@@ -261,7 +261,7 @@ function Profile() {
 
             {/* User Details */}
             <div>
-              <p className="text-sm text-indigo-400 font-medium mb-1">
+              <p className="text-sm text-cyan-300 font-medium mb-1">
                 Your Profile
               </p>
 
@@ -281,7 +281,7 @@ function Profile() {
                 </>
               )}
 
-              <span className="inline-block mt-3 px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-400/10">
+              <span className="inline-block mt-3 px-3 py-1 rounded-full text-xs font-medium bg-cyan-400/[0.08] text-cyan-300 border border-cyan-400/15">
                 Student Account
               </span>
             </div>
@@ -311,10 +311,10 @@ function Profile() {
                   setUsername(user.name);
                   setActiveModal("username");
                 }}
-                className="group text-left rounded-2xl border border-white/10 bg-white/[0.05] p-6 transition-all duration-300 hover:bg-white/[0.08] hover:border-indigo-400/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-950/20"
+                className="group text-left rounded-2xl border border-white/10 bg-white/[0.05] p-6 transition-all duration-300 hover:bg-white/[0.07] hover:border-cyan-400/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-950/20"
               >
-                <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-400/10 flex items-center justify-center mb-5">
-                  <span className="text-indigo-400 font-bold">
+                <div className="w-11 h-11 rounded-xl bg-cyan-400/[0.08] border border-cyan-400/15 flex items-center justify-center mb-5">
+                  <span className="text-cyan-300 font-bold">
                     U
                   </span>
                 </div>
@@ -327,7 +327,7 @@ function Profile() {
                   Update the name displayed on your MindAlign account.
                 </p>
 
-                <p className="text-sm text-indigo-400 mt-5 font-medium group-hover:translate-x-1 transition-transform">
+                <p className="text-sm text-cyan-300 mt-5 font-medium group-hover:translate-x-1 transition-transform">
                   Manage →
                 </p>
               </button>
@@ -339,10 +339,10 @@ function Profile() {
                   setEmail(user.email);
                   setActiveModal("email");
                 }}
-                className="group text-left rounded-2xl border border-white/10 bg-white/[0.05] p-6 transition-all duration-300 hover:bg-white/[0.08] hover:border-indigo-400/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-950/20"
+                className="group text-left rounded-2xl border border-white/10 bg-white/[0.05] p-6 transition-all duration-300 hover:bg-white/[0.07] hover:border-cyan-400/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-950/20"
               >
-                <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-400/10 flex items-center justify-center mb-5">
-                  <span className="text-indigo-400 font-bold">
+                <div className="w-11 h-11 rounded-xl bg-cyan-400/[0.08] border border-cyan-400/15 flex items-center justify-center mb-5">
+                  <span className="text-cyan-300 font-bold">
                     @
                   </span>
                 </div>
@@ -355,7 +355,7 @@ function Profile() {
                   Update the email address connected to your account.
                 </p>
 
-                <p className="text-sm text-indigo-400 mt-5 font-medium group-hover:translate-x-1 transition-transform">
+                <p className="text-sm text-cyan-300 mt-5 font-medium group-hover:translate-x-1 transition-transform">
                   Manage →
                 </p>
               </button>
@@ -364,10 +364,10 @@ function Profile() {
               {/* Password */}
               <button
                 onClick={() => setActiveModal("password")}
-                className="group text-left rounded-2xl border border-white/10 bg-white/[0.05] p-6 transition-all duration-300 hover:bg-white/[0.08] hover:border-indigo-400/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-950/20"
+                className="group text-left rounded-2xl border border-white/10 bg-white/[0.05] p-6 transition-all duration-300 hover:bg-white/[0.07] hover:border-cyan-400/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-950/20"
               >
-                <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-400/10 flex items-center justify-center mb-5">
-                  <span className="text-indigo-400 font-bold">
+                <div className="w-11 h-11 rounded-xl bg-cyan-400/[0.08] border border-cyan-400/15 flex items-center justify-center mb-5">
+                  <span className="text-cyan-300 font-bold">
                     *
                   </span>
                 </div>
@@ -380,7 +380,7 @@ function Profile() {
                   Update your password and keep your account secure.
                 </p>
 
-                <p className="text-sm text-indigo-400 mt-5 font-medium group-hover:translate-x-1 transition-transform">
+                <p className="text-sm text-cyan-300 mt-5 font-medium group-hover:translate-x-1 transition-transform">
                   Manage →
                 </p>
               </button>
@@ -395,9 +395,9 @@ function Profile() {
 
       {/* ================= USERNAME MODAL ================= */}
       {activeModal === "username" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040A]/75 backdrop-blur-md px-4">
 
-          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-7 shadow-2xl">
+          <div className="w-full max-w-md rounded-3xl border border-white/[0.10] bg-[#0D1424] p-7 shadow-2xl shadow-black/40">
 
             <div className="flex justify-between items-center mb-6">
               <div>
@@ -412,7 +412,7 @@ function Profile() {
 
               <button
                 onClick={closeModal}
-                className="text-slate-400 hover:text-white text-xl"
+                className="text-slate-400 hover:text-cyan-300 text-xl transition-colors"
               >
                 ×
               </button>
@@ -426,7 +426,7 @@ function Profile() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white outline-none focus:border-indigo-400"
+              className="w-full px-4 py-3 rounded-xl bg-[#070B16] border border-white/10 text-white outline-none focus:border-cyan-400/50"
               placeholder="Enter username"
             />
 
@@ -434,7 +434,7 @@ function Profile() {
 
               <button
                 onClick={closeModal}
-                className="flex-1 py-3 rounded-xl border border-slate-700 text-slate-300 hover:bg-white/5"
+                className="flex-1 py-3 rounded-xl border border-white/10 text-slate-300 hover:bg-white/[0.06] transition-colors"
               >
                 Cancel
               </button>
@@ -442,7 +442,7 @@ function Profile() {
               <button
                 onClick={handleUsernameUpdate}
                 disabled={saving}
-                className="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold disabled:opacity-50"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:brightness-110 font-semibold disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>
@@ -456,9 +456,9 @@ function Profile() {
 
       {/* ================= EMAIL MODAL ================= */}
       {activeModal === "email" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040A]/75 backdrop-blur-md px-4">
 
-          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-7 shadow-2xl">
+          <div className="w-full max-w-md rounded-3xl border border-white/[0.10] bg-[#0D1424] p-7 shadow-2xl shadow-black/40">
 
             <div className="flex justify-between items-center mb-6">
               <div>
@@ -473,7 +473,7 @@ function Profile() {
 
               <button
                 onClick={closeModal}
-                className="text-slate-400 hover:text-white text-xl"
+                className="text-slate-400 hover:text-cyan-300 text-xl transition-colors"
               >
                 ×
               </button>
@@ -487,7 +487,7 @@ function Profile() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white outline-none focus:border-indigo-400"
+              className="w-full px-4 py-3 rounded-xl bg-[#070B16] border border-white/10 text-white outline-none focus:border-cyan-400/50"
               placeholder="Enter email"
             />
 
@@ -495,7 +495,7 @@ function Profile() {
 
               <button
                 onClick={closeModal}
-                className="flex-1 py-3 rounded-xl border border-slate-700 text-slate-300 hover:bg-white/5"
+                className="flex-1 py-3 rounded-xl border border-white/10 text-slate-300 hover:bg-white/[0.06] transition-colors"
               >
                 Cancel
               </button>
@@ -503,7 +503,7 @@ function Profile() {
               <button
                 onClick={handleEmailUpdate}
                 disabled={saving}
-                className="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold disabled:opacity-50"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:brightness-110 font-semibold disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>
@@ -517,9 +517,9 @@ function Profile() {
 
       {/* ================= PASSWORD MODAL ================= */}
       {activeModal === "password" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040A]/75 backdrop-blur-md px-4">
 
-          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-7 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-md rounded-3xl border border-white/[0.10] bg-[#0D1424] p-7 shadow-2xl shadow-black/40 max-h-[90vh] overflow-y-auto">
 
             <div className="flex justify-between items-center mb-6">
               <div>
@@ -534,7 +534,7 @@ function Profile() {
 
               <button
                 onClick={closeModal}
-                className="text-slate-400 hover:text-white text-xl"
+                className="text-slate-400 hover:text-cyan-300 text-xl transition-colors"
               >
                 ×
               </button>
@@ -551,7 +551,7 @@ function Profile() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white outline-none focus:border-indigo-400"
+                className="w-full px-4 py-3 rounded-xl bg-[#070B16] border border-white/10 text-white outline-none focus:border-cyan-400/50"
                 placeholder="Enter current password"
               />
             </div>
@@ -567,7 +567,7 @@ function Profile() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white outline-none focus:border-indigo-400"
+                className="w-full px-4 py-3 rounded-xl bg-[#070B16] border border-white/10 text-white outline-none focus:border-cyan-400/50"
                 placeholder="Enter new password"
               />
             </div>
@@ -583,7 +583,7 @@ function Profile() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white outline-none focus:border-indigo-400"
+                className="w-full px-4 py-3 rounded-xl bg-[#070B16] border border-white/10 text-white outline-none focus:border-cyan-400/50"
                 placeholder="Confirm new password"
               />
             </div>
@@ -593,7 +593,7 @@ function Profile() {
 
               <button
                 onClick={closeModal}
-                className="flex-1 py-3 rounded-xl border border-slate-700 text-slate-300 hover:bg-white/5"
+                className="flex-1 py-3 rounded-xl border border-white/10 text-slate-300 hover:bg-white/[0.06] transition-colors"
               >
                 Cancel
               </button>
@@ -601,7 +601,7 @@ function Profile() {
               <button
                 onClick={handlePasswordUpdate}
                 disabled={saving}
-                className="flex-1 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold disabled:opacity-50"
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:brightness-110 font-semibold disabled:opacity-50"
               >
                 {saving ? "Updating..." : "Update Password"}
               </button>

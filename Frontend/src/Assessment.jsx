@@ -238,10 +238,13 @@ function Assessment() {
     }
   }, [location.pathname, isTextAssessment, isRetake])
 
-  const progress = ((currentQuestion + 1) / totalQuestions) * 100
+  // Keep the displayed index valid when switching between the 10-question
+  // option test and the 5-question text test.
+  const questionIndex = Math.min(currentQuestion, totalQuestions - 1)
+  const progress = ((questionIndex + 1) / totalQuestions) * 100
   const currentAnswered = isTextAssessment
-    ? textResponses[currentQuestion].trim().length > 0
-    : answers[currentQuestion] !== null
+    ? (textResponses[questionIndex] ?? '').trim().length > 0
+    : answers[questionIndex] !== null && answers[questionIndex] !== undefined
 
   const selectAnswer = (value) => {
     setAnswers((previous) =>
@@ -423,7 +426,7 @@ function Assessment() {
                 onClick={() => navigate('/dashboard')}
                 className="rounded-xl border border-white/10 px-6 py-3 font-medium text-slate-300 transition hover:bg-white/[0.05] hover:text-white"
               >
-                Back to dashboard
+                Dashboard
               </button>
             </div>
           </section>
@@ -461,7 +464,7 @@ function Assessment() {
           <div className="mb-7">
             <div className="mb-3 flex items-center justify-between text-sm">
               <span className="text-slate-400">
-                Question {currentQuestion + 1} of {totalQuestions}
+                Question {questionIndex + 1} of {totalQuestions}
               </span>
               <span className="font-medium text-cyan-300">{Math.round(progress)}%</span>
             </div>
@@ -476,18 +479,18 @@ function Assessment() {
           <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/95 p-6 shadow-2xl md:p-10">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
               {isTextAssessment
-                ? `Your thoughts · ${currentQuestion + 1}`
-                : `Question ${currentQuestion + 1}`}
+                ? `Your thoughts · ${questionIndex + 1}`
+                : `Question ${questionIndex + 1}`}
             </p>
             <h2 className="mb-8 text-xl font-semibold leading-relaxed md:text-2xl">
               {isTextAssessment
-                ? textQuestions[currentQuestion]
-                : questionConfig[currentQuestion].question}
+                ? textQuestions[questionIndex]
+                : questionConfig[questionIndex].question}
             </h2>
 
             {isTextAssessment ? (
               <textarea
-                value={textResponses[currentQuestion]}
+                value={textResponses[questionIndex] ?? ''}
                 onChange={(event) => updateTextResponse(event.target.value)}
                 placeholder="Write your response here..."
                 rows={7}
@@ -495,8 +498,8 @@ function Assessment() {
               />
             ) : (
               <div className="space-y-3">
-                {questionConfig[currentQuestion].options.map((option) => {
-                  const selected = answers[currentQuestion] === option.value
+                {questionConfig[questionIndex].options.map((option) => {
+                  const selected = answers[questionIndex] === option.value
                   return (
                     <button
                       key={option.label}
