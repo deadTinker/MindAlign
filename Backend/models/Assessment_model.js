@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const assessmentSchema = new mongoose.Schema(
@@ -8,7 +9,6 @@ const assessmentSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Option-based assessment
     answers: {
       type: [Number],
       default: undefined,
@@ -30,13 +30,11 @@ const assessmentSchema = new mongoose.Schema(
       default: undefined,
     },
 
-    // Text-based assessment
     textResponses: {
       type: [String],
       default: undefined,
     },
 
-    // Track completion of each assessment
     optionAssessmentCompleted: {
       type: Boolean,
       default: false,
@@ -47,13 +45,24 @@ const assessmentSchema = new mongoose.Schema(
       default: false,
     },
 
-    // Final assessment score
+    // Existing raw questionnaire score
     score: {
       type: Number,
       default: null,
     },
 
     total: {
+      type: Number,
+      default: null,
+    },
+
+    // New normalized questionnaire score (0–100)
+    questionnaireScore: {
+      type: Number,
+      default: null,
+    },
+
+    questionnaireTotal: {
       type: Number,
       default: null,
     },
@@ -84,9 +93,7 @@ const assessmentSchema = new mongoose.Schema(
       default: "Pending",
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Assessment", assessmentSchema);

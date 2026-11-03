@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
@@ -48,6 +49,9 @@ function Dashboard() {
 
         const data = await response.json()
         setAssessment(data.assessment)
+        console.log('Latest assessment:', data.assessment)
+        console.log('Questionnaire score:', data.assessment?.questionnaireScore)
+        console.log('Questionnaire total:', data.assessment?.questionnaireTotal)
       } catch (error) {
         console.error('Error fetching assessment:', error)
       } finally {
@@ -59,12 +63,12 @@ function Dashboard() {
   }, [])
 
   const scorePercentage =
-    assessment && Number(assessment.total) > 0
+    assessment && Number(assessment.questionnaireTotal) > 0
       ? Math.min(
           100,
           Math.max(
             0,
-            (Number(assessment.score) / Number(assessment.total)) * 100
+            (Number(assessment.questionnaireScore) / Number(assessment.questionnaireTotal)) * 100
           )
         )
       : 0
@@ -329,11 +333,11 @@ function Dashboard() {
                       <div className="absolute inset-[7px] rounded-full bg-[#0D1528] border border-white/[0.06] flex flex-col items-center justify-center shadow-inner">
 
                         <span className="text-4xl font-bold tracking-tight bg-gradient-to-br from-white via-cyan-100 to-blue-300 bg-clip-text text-transparent">
-                          {assessment.score}
+                          {assessment.questionnaireScore}
                         </span>
 
                         <span className="text-xs text-slate-500 mt-1">
-                          out of {assessment.total}
+                          out of {assessment.questionnaireTotal}
                         </span>
 
                         <div className="mt-2 px-2.5 py-1 rounded-full border border-cyan-400/10 bg-cyan-400/[0.06] text-cyan-300 text-[9px] font-semibold tracking-[0.12em]">

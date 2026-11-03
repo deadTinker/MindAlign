@@ -1,5 +1,128 @@
 const Assessment = require("../models/Assessment_model");
 
+// Each question is scored according to its actual answer range.
+// All resulting scores represent burnout-related concern:
+// 0 = lower concern, 100 = higher concern.
+const calculateQuestionnaireScore = (features) => {
+  const scoringRules = {
+    study_hours_per_day: {
+      min: 1,
+      max: 9,
+      reverse: false,
+    },
+    exam_pressure: {
+      min: 1,
+      max: 10,
+      reverse: false,
+    },
+    academic_performance: {
+      min: 55,
+      max: 87,
+      reverse: true,
+    },
+    sleep_hours: {
+      min: 3.5,
+      max: 9,
+      reverse: false,
+    },
+    physical_activity: {
+      min: 0,
+      max: 7,
+      reverse: true,
+    },
+    social_support: {
+      min: 1,
+      max: 10,
+      reverse: true,
+    },
+    screen_time: {
+      min: 1.5,
+      max: 9,
+      reverse: false,
+    },
+    internet_usage: {
+      min: 1.5,
+      max: 9,
+      reverse: false,
+    },
+    financial_stress: {
+      min: 0,
+      max: 10,
+      reverse: false,
+    },
+    family_expectation: {
+      min: 0,
+      max: 10,
+      reverse: false,
+    },
+  };
+
+  const values = {};
+
+  features.forEach(({ feature, value }) => {
+    if (!scoringRules[feature]) {
+      throw new Error(`Unknown assessment feature: ${feature}`);
+    }
+
+    if (values[feature] !== undefined) {
+      throw new Error(`Duplicate assessment feature: ${feature}`);
+    }
+
+    const rule = scoringRules[feature];
+
+    if (value < rule.min || value > rule.max) {
+      throw new Error(`Invalid value for ${feature}`);
+    }
+
+    values[feature] = value;
+  });
+
+  const expectedFeatures = Object.keys(scoringRules);
+
+  if (
+    features.length !== expectedFeatures.length ||
+    expectedFeatures.some((feature) => values[feature] === undefined)
+  ) {
+    throw new Error("All 10 assessment questions are required.");
+  }
+
+  const normalize = (value, min, max) =>
+    ((value - min) / (max - min)) * 100;
+
+  const questionScores = expectedFeatures.map((feature) => {
+    const value = values[feature];
+    const rule = scoringRules[feature];
+
+    // Sleep uses an optimal range rather than assuming
+    // that more sleep always means less concern.
+    if (feature === "sleep_hours") {
+      if (value >= 6 && value <= 8) {
+        return 0;
+      }
+
+      if (value < 6) {
+        return ((6 - value) / (6 - 3.5)) * 100;
+      }
+
+      return ((value - 8) / (9 - 8)) * 25;
+    }
+
+    let score = normalize(value, rule.min, rule.max);
+
+    if (rule.reverse) {
+      score = 100 - score;
+    }
+
+    return score;
+  });
+
+  const average =
+    questionScores.reduce((sum, score) => sum + score, 0) /
+    questionScores.length;
+
+  return Number(average.toFixed(2));
+};
+
 const submitAssessment = async (req, res) => {
   let assessment;
 
@@ -80,7 +203,6 @@ const submitAssessment = async (req, res) => {
       });
     } else if (retakeAssessment === true) {
       // Retaking either test invalidates the previous combined result.
-      // Both assessments must be completed again.
       assessment.optionAssessmentCompleted = false;
       assessment.textAssessmentCompleted = false;
 
@@ -90,6 +212,9 @@ const submitAssessment = async (req, res) => {
 
       assessment.score = null;
       assessment.total = null;
+
+      assessment.questionnaireScore = null;
+      assessment.questionnaireTotal = null;
 
       assessment.nlpScores = {
         stress: null,
@@ -110,15 +235,24 @@ const submitAssessment = async (req, res) => {
         });
       }
 
+      // Keep original answers and features unchanged.
       assessment.answers = answers;
       assessment.features = features;
 
+      // Legacy raw score fields retained for compatibility.
       assessment.score = answers.reduce(
         (sum, answer) => sum + answer,
         0
       );
 
       assessment.total = answers.length * 5;
+
+      // New normalized questionnaire concern index.
+      assessment.questionnaireScore =
+        calculateQuestionnaireScore(features);
+
+      assessment.questionnaireTotal = 100;
+
       assessment.optionAssessmentCompleted = true;
     }
 
@@ -180,6 +314,7 @@ const submitAssessment = async (req, res) => {
     console.log("NLP scores:", nlpScores);
 
     // 2. Combine structured features with NLP scores.
+    // Original feature values are passed to ML unchanged.
     const featureObject = {};
 
     assessment.features.forEach((item) => {
@@ -214,7 +349,7 @@ const submitAssessment = async (req, res) => {
 
     console.log("ML result:", mlResult);
 
-    // 4. Save the final analysis.
+    // 4. Save the final analysis separately.
     assessment.nlpScores = {
       stress: nlpScores.stress,
       anxiety: nlpScores.anxiety,
