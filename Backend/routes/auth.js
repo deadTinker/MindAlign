@@ -1,4 +1,6 @@
 const express = require("express");
+const upload = require("../middleware/uploadprofile_pic.js")
+
 
 const {
   signup,
@@ -6,7 +8,8 @@ const {
   getProfile,
   updateUsername,
   updateEmail,
-  updatePassword
+  updatePassword,
+  uploadProfilePhoto
 } = require("../controllers/authController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -18,6 +21,15 @@ router.post("/login", login);
 
 // Protected profile routes
 router.get("/profile", authMiddleware, getProfile);
+
+
+
+router.put(
+  "/profile/photo", 
+  authMiddleware,
+  upload.single("profilePhoto"),
+  uploadProfilePhoto
+)
 
 router.put(
   "/profile/username",
@@ -36,6 +48,8 @@ router.put(
   authMiddleware,
   updatePassword
 );
+
+
 
 router.get("/protected", authMiddleware, (req, res) => {
   res.status(200).json({

@@ -16,7 +16,23 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+
+  profilePhoto: {
+
+      url: { 
+        type: String,
+        default: ""
+      },
+      publicId: {
+        type:String, 
+        default: ""
+      }
   }
+
+
+
+
 });
 
 module.exports = mongoose.model("User", userSchema);

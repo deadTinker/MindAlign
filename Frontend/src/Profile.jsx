@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef} from "react";
 import Sidebar from "./Sidebar";
 
 const API_URL = "http://localhost:5000/api/auth";
@@ -6,8 +6,16 @@ const API_URL = "http://localhost:5000/api/auth";
 function Profile() {
   const [user, setUser] = useState({
     name: "",
-    email: ""
+    email: "",
+    profilePhoto: {
+      url: ""
+    }
+
   });
+
+  const [selectedImage, setselectedImage] = useState(null);  // stores the photo that user selected in this.
+  const [showPreview , setShowPreview ] = useState(false);
+  const fileInputRef   =  useRef(null);            // this will let camera button open the file picker.
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -211,6 +219,76 @@ function Profile() {
     }
   };
 
+  
+  const handleImageSelection = (e) => {
+ 
+    const file = e.target.files[0];
+    console.log("selected file:", file);
+
+    if(file){
+      setselectedImage(file);
+      setShowPreview(true);
+    }
+  };
+
+
+  const handleProfilePhotoUpload = async() => {
+   
+    if(!selectedImage){
+      alert("Please select an image first.");
+      return;
+    }
+
+  try{
+        const formData = new FormData();
+        formData.append("profilePhoto", selectedImage);
+
+        const response = await fetch(`${API_URL}/profile/photo`,{
+          method: "PUT",
+          headers:{
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+
+        });
+
+        const data =await response.json();
+
+        if(response.ok){
+
+          // set user profile phot
+          setUser(prevUser =>({
+            ...prevUser,
+            profilePhoto: data.profilePhoto
+          }))
+
+
+           setShowPreview(false);
+           setselectedImage(null);
+
+          alert("profile photo uploaded successfully!");
+        }else{
+          alert(data.message);
+        }
+
+  }catch(error){
+     console.error("Error In photo upload", error);
+     alert("Couldn't upload your profile photo. Please try again.");
+
+  }finally{
+     if(fileInputRef.current){
+         fileInputRef.current.value ="";
+     }
+  }
+  };
+
+
+
+
+
+
+
+
   return (
     <div className="min-h-screen bg-[#070B16] text-white relative overflow-hidden">
 
@@ -238,25 +316,43 @@ function Profile() {
           </p>
         </div>
 
+
         {/* Profile Card */}
         <section className="max-w-5xl rounded-3xl border border-white/10 bg-[#0D1424]/90 backdrop-blur-xl p-6 md:p-8 shadow-2xl">
 
           {/* Profile Information */}
           <div className="flex flex-col md:flex-row md:items-center gap-6">
 
-            {/* Profile Image */}
-            <div className="relative">
+           {/* Profile Image */}
+                      {/*   testing for bordering-->  {{style="border: 2px solid black;}} */}
+            <div className="relative" >
+
+              <input 
+                type="file"
+                accept="image/jpeg,image/png, image/webp"
+                ref = {fileInputRef}
+                onChange={handleImageSelection}
+                className="hidden"
+              />
+              {/* Image container */}  
               <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-cyan-400/20 bg-[#0D1424] shadow-xl flex items-center justify-center">
-
+               {/*Image which we are showing*/}
                 <img
-                  src="/favicon.svg"
+                  src ={user.profilePhoto?.url ||  "/favicon.svg"}
                   alt="Profile"
-                  className="w-full h-full object-cover p-5"
+                  className="w-full h-full object-cover "
                 />
-
               </div>
 
-              <div className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-emerald-500 border-4 border-slate-950"></div>
+
+              <button
+                    type = "button"
+                    onClick={() => fileInputRef.current.click()}
+                    className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-emerald-500 ho/ver:bg-cyan-400 border-4 border-slate-950 flex items-center justify-center shadow-lg transition-colors"
+                    title="Change profile photo"
+              ></button>
+              {/* Green status indicator*/}
+              {/* <div className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-emerald-500 border-4 border-slate-950"></div> */}
             </div>
 
             {/* User Details */}
@@ -512,7 +608,7 @@ function Profile() {
 
           </div>
         </div>
-      )}
+      )};
 
 
       {/* ================= PASSWORD MODAL ================= */}
@@ -612,8 +708,62 @@ function Profile() {
         </div>
       )}
 
+
+
+
+        {/*Showing  profile photo preview*/}
+        {showPreview && selectedImage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040A]/75 backdrop-blur-md px-4">
+            <div className="w-full max-w-md rounded-3xl border border-white/[0.10] bg-[#0D1424] p-7 shadow-2xl shadow-black/40 max-h-[90vh] overflow-y-auto">
+              <div className ="flex justify-between items-center mb-6">
+                   <h2 className="text-2xl font-semibold">
+                     Preview Profile Photo
+                  </h2>
+
+                     
+              </div>
+
+
+
+             {/* secclected Image */}
+              <div className="flex justify-center my-8">
+               <img 
+                  src= {URL.createObjectURL(selectedImage)}
+                  alt="New profile preview"
+                  className="w-36 h-36 rounded-full object-cover border-4 border-cyan-400/30 shadow-x1"
+                />
+              </div>
+              <p className="text-center text-sm text-slate-400 mb-6">
+                Do you want to use this photo as your profile picture?
+              </p>
+
+
+              {/*Action buttons */} 
+              <div className="flex gap-3"> 
+                 <button 
+                  onClick={() =>{
+                    setShowPreview(false);
+                    setSelectedImage(null);
+                  
+                  }}
+                  className="flex-1 py-2 rounded-xl border border-white/10 text-slate-300 hover:bg-white/[0.06] transition-colors"
+                  >Cancel</button>
+
+                  <button onClick={() => { handleProfilePhotoUpload(); }}
+
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:brightness-110 font-semibold">
+                    Confirm
+                  </button>
+
+            </div>
+
+            </div>
+          </div>
+        )};
+
     </div>
-  );
-}
+    );
+  }
+
 
 export default Profile;

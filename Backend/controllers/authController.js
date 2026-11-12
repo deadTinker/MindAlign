@@ -1,6 +1,9 @@
 const bcrypt = require("bcryptjs");
+const cloudinary =require("../config/cloudinary.js");
+const streamifier = require("streamifier");
+
 const jwt = require("jsonwebtoken");
-const User = require("../models/User_model");
+const User = require("../models/User_model.js");
 
 const signup = async (req, res) => {
   try {
@@ -124,7 +127,8 @@ const getProfile = async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        profilePhoto: user.profilePhoto
       }
     });
 
@@ -300,6 +304,76 @@ const updatePassword = async (req, res) => {
   }
 };
 
+const uploadProfilePhoto = async (req, res) => {
+ 
+
+  try{
+    // selected photo we have?
+    if(!req.file){
+      return res.status(400).json({
+        message: "please select a photo."
+      });
+    }
+
+
+
+    //user exist?
+    const user = await User.findById(req.user);
+    if(!user){
+      return res.status(404).json({
+        message:"User not found"
+      });
+    }
+
+    const oldPublicId = user.profilePhoto?.publicId;   // ? -> user for if publicid not exist -> then js will return error so for that ? mark deal with and return undefine in that case
+
+
+    const result =  await new Promise((resolve,reject)=> {
+       const stream = cloudinary.uploader.upload_stream({
+          folder:"mindAlign/profile_photos"
+       },
+       (error,result) =>{   // call backs --> means function in function
+        if(error) {
+          reject(error);
+        }else{
+          resolve(result);
+        }
+       }
+      );
+      streamifier.createReadStream(req.file.buffer).pipe(stream);
+    });
+    
+    
+
+
+    user.profilePhoto.url = result.secure_url;
+    user.profilePhoto.publicId =result.public_id;
+
+    await user.save();
+
+    if(result.public_id && oldPublicId){
+      try{
+       await cloudinary.uploader.destroy(oldPublicId);
+      }catch(deleteError){
+        console.error("Failed to delee old photo:", deleteError);
+      }
+    }
+
+
+
+    return res.status(200).json({
+      message: "Profile photo updates successfully",
+      profilePhoto: user.profilePhoto
+    });
+
+  }
+  catch(error){
+    console.error(error);
+    return res.status(500).json({
+      message: "Unable to  upload profile photo"
+    });
+  }
+}
 
 module.exports = {
   signup,
@@ -307,5 +381,6 @@ module.exports = {
   getProfile,
   updateUsername,
   updateEmail,
-  updatePassword
+  updatePassword,
+  uploadProfilePhoto
 };
