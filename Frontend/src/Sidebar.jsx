@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
+  Users,
   UserRound,
   ClipboardList,
   FileChartColumn,
@@ -19,7 +20,7 @@ function Sidebar() {
     navigate('/login')
   }
 
-  const isActive = (path) => location.pathname === path
+  const isActive = (path) => path === '/community' ? location.pathname.startsWith('/community') : location.pathname === path
 
   const linkClass = (path) =>
     `group relative flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ease-out ${
@@ -82,6 +83,20 @@ function Sidebar() {
             <span className="flex-1">Dashboard</span>
 
             {isActive('/dashboard') && (
+              <ChevronRight size={15} className="text-cyan-400 animate-[fadeIn_0.25s_ease-out]" />
+            )}
+          </Link>
+
+          {/* Community */}
+          <Link to="/community" className={linkClass('/community')}>
+            {isActive('/community') && (
+              <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-gradient-to-b from-cyan-300 to-blue-500 shadow-[0_0_10px_rgba(34,211,238,0.35)]" />
+            )}
+
+            <Users size={19} className={iconClass('/community')} />
+            <span className="flex-1">Community</span>
+
+            {isActive('/community') && (
               <ChevronRight size={15} className="text-cyan-400 animate-[fadeIn_0.25s_ease-out]" />
             )}
           </Link>

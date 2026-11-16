@@ -6,6 +6,7 @@ import Profile from './Profile'
 import Assessment from './Assessment'
 import Summary from './Summary'
 import ProtectedRoute from './ProtectedRoute'
+import Community from './Community'
 
 function App() {
   return (
@@ -28,6 +29,33 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/community"
+          element={
+            <ProtectedRoute>
+              <Community />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/community/user/:userId"
+          element={
+            <ProtectedRoute>
+              <Community />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/community/:articleId"
+          element={
+            <ProtectedRoute>
+              <Community />
             </ProtectedRoute>
           }
         />
