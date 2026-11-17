@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+
+import Index from './Index'
 import Signup from './Signup'
 import Login from './Login'
 import Dashboard from './Dashboard'
@@ -12,9 +14,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
+        {/* Landing Page */}
+        <Route path="/" element={<Index />} />
+
+        {/* Authentication */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
 
+        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
@@ -96,7 +104,9 @@ function App() {
           }
         />
 
-        <Route path="*" element={<Login />} />
+        {/* Redirect unknown routes to landing page */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
     </BrowserRouter>
   )
