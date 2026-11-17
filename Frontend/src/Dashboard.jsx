@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
@@ -9,13 +8,28 @@ import {
   BookOpen,
   HeartPulse,
   ShieldCheck,
-  Sparkles,
   Clock3,
   Moon,
   Users,
   ClipboardCheck,
-  FileChartColumn
+  FileChartColumn,
 } from 'lucide-react'
+
+// Subtle wellness backdrop tiles matching the Login & Signup aesthetic
+const BACKDROP_TILES = [
+  { title: 'Deep Sleep', tag: 'Audio Series', gradient: 'from-emerald-100 via-green-50 to-white' },
+  { title: 'Anxiety Reset', tag: '7-Day Course', gradient: 'from-teal-100 via-emerald-50 to-white' },
+  { title: 'Morning Clarity', tag: 'Daily Ritual', gradient: 'from-lime-100 via-green-50 to-white' },
+  { title: 'Focus Flow', tag: 'Soundscapes', gradient: 'from-green-100 via-teal-50 to-white' },
+  { title: 'Letting Go', tag: 'Guided Breath', gradient: 'from-emerald-100 via-slate-50 to-white' },
+  { title: 'Inner Calm', tag: 'Mindfulness', gradient: 'from-green-200/70 via-emerald-50 to-white' },
+  { title: 'Night Wind Down', tag: 'Sleep Stories', gradient: 'from-teal-100 via-cyan-50 to-white' },
+  { title: 'Self Compassion', tag: 'Audio Journal', gradient: 'from-lime-100 via-emerald-50 to-white' },
+  { title: 'Stress Relief', tag: 'Quick Reset', gradient: 'from-emerald-100 via-green-50 to-white' },
+  { title: 'Emotional Balance', tag: 'Masterclass', gradient: 'from-green-100 via-slate-50 to-white' },
+  { title: 'Quiet Mind', tag: 'Meditation', gradient: 'from-teal-100 via-green-50 to-white' },
+  { title: 'Renewal', tag: 'Evening Routine', gradient: 'from-emerald-200/60 via-lime-50 to-white' },
+]
 
 function Dashboard() {
   const navigate = useNavigate()
@@ -68,7 +82,9 @@ function Dashboard() {
           100,
           Math.max(
             0,
-            (Number(assessment.questionnaireScore) / Number(assessment.questionnaireTotal)) * 100
+            (Number(assessment.questionnaireScore) /
+              Number(assessment.questionnaireTotal)) *
+              100
           )
         )
       : 0
@@ -99,10 +115,10 @@ function Dashboard() {
       title: 'Understanding Burnout',
       description:
         'Burnout is physical, emotional, and mental exhaustion that can develop after prolonged or excessive stress.',
-      accent: 'from-blue-500/[0.12] to-cyan-500/[0.02]',
-      iconColor: 'text-cyan-300',
-      iconBg: 'bg-cyan-400/[0.08]',
-      border: 'hover:border-cyan-400/25',
+      accent: 'from-emerald-50/90 via-white to-white',
+      iconColor: 'text-[#16A34A]',
+      iconBg: 'bg-emerald-50 border-emerald-200/70',
+      border: 'hover:border-[#22C55E]/50',
     },
     {
       icon: Activity,
@@ -110,10 +126,10 @@ function Dashboard() {
       title: 'Common Causes',
       description:
         'Excessive workload, academic pressure, insufficient rest, and limited support can contribute to burnout.',
-      accent: 'from-blue-500/[0.12] to-indigo-500/[0.02]',
-      iconColor: 'text-blue-300',
-      iconBg: 'bg-blue-400/[0.08]',
-      border: 'hover:border-blue-400/25',
+      accent: 'from-teal-50/90 via-white to-white',
+      iconColor: 'text-teal-600',
+      iconBg: 'bg-teal-50 border-teal-200/70',
+      border: 'hover:border-teal-400/50',
     },
     {
       icon: HeartPulse,
@@ -121,10 +137,10 @@ function Dashboard() {
       title: 'Recognizing the Signs',
       description:
         'Exhaustion, difficulty concentrating, reduced motivation, irritability, and feeling overwhelmed are possible signs.',
-      accent: 'from-violet-500/[0.12] to-blue-500/[0.02]',
-      iconColor: 'text-violet-300',
-      iconBg: 'bg-violet-400/[0.08]',
-      border: 'hover:border-violet-400/25',
+      accent: 'from-lime-50/90 via-white to-white',
+      iconColor: 'text-lime-700',
+      iconBg: 'bg-lime-50 border-lime-200/70',
+      border: 'hover:border-lime-400/60',
     },
     {
       icon: ShieldCheck,
@@ -132,10 +148,10 @@ function Dashboard() {
       title: 'Taking Care of Yourself',
       description:
         'Regular breaks, adequate sleep, realistic goals, physical activity, and support from trusted people can help.',
-      accent: 'from-cyan-500/[0.10] to-teal-500/[0.02]',
-      iconColor: 'text-teal-300',
-      iconBg: 'bg-teal-400/[0.08]',
-      border: 'hover:border-teal-400/25',
+      accent: 'from-green-50/90 via-white to-white',
+      iconColor: 'text-[#15803D]',
+      iconBg: 'bg-green-50 border-green-200/70',
+      border: 'hover:border-[#22C55E]/50',
     },
   ]
 
@@ -158,85 +174,83 @@ function Dashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#070B16] text-white relative overflow-hidden selection:bg-cyan-400/20">
-
-      {/* Aurora Background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-48 left-[15%] w-[450px] h-[450px] rounded-full bg-blue-600/[0.10] blur-3xl" />
-        <div className="absolute top-[20%] -right-48 w-[400px] h-[400px] rounded-full bg-cyan-500/[0.06] blur-3xl" />
-        <div className="absolute -bottom-56 left-[35%] w-[450px] h-[450px] rounded-full bg-violet-600/[0.06] blur-3xl" />
-
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(148,163,184,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.5) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+    <div className="min-h-screen bg-white text-slate-900 relative overflow-x-hidden selection:bg-[#22C55E] selection:text-white">
+      {/* Light Tiled Content Backdrop (Matches Login Page) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 overflow-hidden opacity-45"
+      >
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 p-3 -rotate-3 scale-110">
+          {BACKDROP_TILES.map((tile, idx) => (
+            <div
+              key={idx}
+              className={`h-44 sm:h-52 rounded bg-gradient-to-br ${tile.gradient} border border-emerald-200/60 p-4 flex flex-col justify-end relative overflow-hidden`}
+            >
+              <span className="text-[10px] uppercase tracking-widest text-emerald-700/60 font-semibold">
+                {tile.tag}
+              </span>
+              <p className="text-lg font-bold tracking-tight text-slate-800/70">
+                {tile.title}
+              </p>
+            </div>
+          ))}
+        </div>
+        {/* Soft White Radial + Linear Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/95" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0.96)_100%)]" />
       </div>
 
       <Sidebar />
 
       {/* Main Content */}
       <main className="relative z-10 ml-64 min-h-screen p-6 md:p-10">
-
         <div className="max-w-7xl mx-auto">
-
           {/* Header */}
           <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 mb-10 animate-[fadeInUp_0.6s_ease-out_both]">
-
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-400/15 bg-cyan-400/[0.05] text-cyan-300 text-[11px] font-semibold tracking-[0.14em] mb-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-200 bg-emerald-50/90 text-[#16A34A] text-[11px] font-semibold tracking-[0.14em] mb-4">
                 <span className="relative flex w-2 h-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-30" />
-                  <span className="relative inline-flex w-2 h-2 rounded-full bg-cyan-400" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-50" />
+                  <span className="relative inline-flex w-2 h-2 rounded-full bg-[#22C55E]" />
                 </span>
                 YOUR PERSONAL WELLNESS SPACE
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
                 Your mind matters
-                <span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 bg-clip-text text-transparent">
-                  .
-                </span>
+                <span className="text-[#22C55E]">.</span>
               </h1>
 
-              <p className="text-slate-400 mt-3 max-w-xl leading-7">
-                A little space to pause, reflect, and understand your well-being.
+              <p className="text-slate-500 mt-3 max-w-xl leading-7">
+                A calm space to pause, reflect, and understand your well-being.
                 Take things one step at a time.
               </p>
             </div>
 
-            <div className="flex items-center gap-3 text-sm border border-white/[0.08] bg-[#0D1424]/80 rounded-2xl px-4 py-3 self-start sm:self-auto transition-all duration-300 hover:border-cyan-400/20 hover:bg-[#111C30]">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400/15 to-blue-500/10 border border-cyan-400/10 flex items-center justify-center">
-                <HeartPulse size={20} className="text-cyan-300" />
+            <div className="flex items-center gap-3 text-sm border border-slate-200/90 bg-white/90 backdrop-blur-md rounded-2xl px-4 py-3 self-start sm:self-auto shadow-sm transition-all duration-300 hover:border-[#22C55E]/40 hover:shadow-md">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center">
+                <HeartPulse size={20} className="text-[#16A34A]" />
               </div>
               <div>
-                <p className="text-white font-medium">Your well-being</p>
-                <p className="text-xs text-slate-500 mt-1">Starts with you</p>
+                <p className="text-slate-900 font-semibold">Your well-being</p>
+                <p className="text-xs text-slate-500 mt-0.5">Starts with you</p>
               </div>
             </div>
-
           </header>
 
-          {/* Assessment Overview */}
-          <section className="group relative rounded-3xl border border-white/[0.09] bg-gradient-to-br from-[#101B31] via-[#0D1425] to-[#101024] p-6 md:p-9 shadow-2xl shadow-black/20 mb-7 overflow-hidden animate-[fadeInUp_0.7s_ease-out_both]">
-
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/[0.04] via-transparent to-cyan-400/[0.04] pointer-events-none" />
-            <div className="absolute -top-32 -right-16 w-80 h-80 rounded-full bg-cyan-400/[0.08] blur-[100px] pointer-events-none transition-opacity duration-700 group-hover:bg-cyan-400/[0.12]" />
-            <div className="absolute -bottom-36 left-1/3 w-72 h-72 rounded-full bg-violet-500/[0.08] blur-[100px] pointer-events-none" />
+          {/* Assessment Overview Card */}
+          <section className="group relative rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md p-6 md:p-9 shadow-[0_20px_60px_rgba(15,23,42,0.06)] mb-7 overflow-hidden animate-[fadeInUp_0.7s_ease-out_both]">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/70 via-white/40 to-teal-50/40 pointer-events-none" />
+            <div className="absolute -top-28 -right-16 w-72 h-72 rounded-full bg-[#22C55E]/[0.08] blur-3xl pointer-events-none transition-opacity duration-700 group-hover:bg-[#22C55E]/[0.12]" />
 
             <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
-
               <div className="max-w-xl">
-
-                <div className="flex items-center gap-2 text-cyan-300 text-xs font-semibold tracking-[0.16em] mb-5">
+                <div className="flex items-center gap-2 text-[#16A34A] text-xs font-bold tracking-[0.16em] mb-4">
                   <Activity size={15} />
                   WELLNESS OVERVIEW
                 </div>
 
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
                   {loading
                     ? 'Checking in with your progress'
                     : resultsReady
@@ -247,20 +261,20 @@ function Dashboard() {
                 </h2>
 
                 {loading ? (
-                  <p className="mt-4 text-slate-400 leading-7">
+                  <p className="mt-4 text-slate-500 leading-7">
                     Loading your latest assessment. Just a moment...
                   </p>
                 ) : resultsReady ? (
                   <>
-                    <p className="mt-4 text-slate-400 leading-7">
+                    <p className="mt-4 text-slate-600 leading-7">
                       Both assessments are complete and your results are ready.
-                      Take a moment to reflect on how you've been feeling.
+                      Take a moment to reflect on how you&apos;ve been feeling.
                     </p>
 
                     <div className="flex flex-wrap items-center gap-3 mt-7">
                       <button
                         onClick={() => navigate('/summary')}
-                        className="group/button inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold text-sm shadow-lg shadow-blue-950/40 transition-all duration-300 hover:shadow-cyan-500/20 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+                        className="group/button inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#22C55E] hover:bg-[#16A34A] active:bg-[#15803D] text-white font-semibold text-sm shadow-md shadow-emerald-500/20 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
                       >
                         View Results
                         <ArrowUpRight
@@ -271,7 +285,7 @@ function Dashboard() {
 
                       <button
                         onClick={() => navigate('/assessment/option')}
-                        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/10 bg-white/[0.03] text-slate-300 font-medium text-sm transition-all duration-300 hover:bg-white/[0.07] hover:border-cyan-400/20 hover:text-white"
+                        className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-slate-300 bg-slate-50/90 text-slate-700 font-semibold text-sm transition-all duration-200 hover:bg-white hover:border-[#22C55E] hover:text-[#16A34A]"
                       >
                         Retake Assessment
                       </button>
@@ -279,7 +293,7 @@ function Dashboard() {
                   </>
                 ) : (
                   <>
-                    <p className="mt-4 text-slate-400 leading-7">
+                    <p className="mt-4 text-slate-600 leading-7">
                       {assessment
                         ? bothAssessmentsCompleted
                           ? 'Both assessments are complete, but your analysis is still processing. Check back shortly.'
@@ -288,8 +302,16 @@ function Dashboard() {
                     </p>
 
                     <button
-                      onClick={() => navigate(assessment ? (bothAssessmentsCompleted ? '/summary' : missingAssessmentPath) : '/assessment/option')}
-                      className="group/button inline-flex items-center gap-2 mt-7 px-5 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold text-sm shadow-lg shadow-blue-950/40 transition-all duration-300 hover:shadow-cyan-500/20 hover:shadow-xl hover:-translate-y-0.5"
+                      onClick={() =>
+                        navigate(
+                          assessment
+                            ? bothAssessmentsCompleted
+                              ? '/summary'
+                              : missingAssessmentPath
+                            : '/assessment/option'
+                        )
+                      }
+                      className="group/button inline-flex items-center gap-2 mt-7 px-5 py-3 rounded-lg bg-[#22C55E] hover:bg-[#16A34A] active:bg-[#15803D] text-white font-semibold text-sm shadow-md shadow-emerald-500/20 transition-all duration-200 hover:-translate-y-0.5"
                     >
                       <ClipboardCheck size={17} />
                       {assessment
@@ -305,34 +327,32 @@ function Dashboard() {
                   </>
                 )}
 
-                <p className="text-xs text-slate-600 mt-5">
+                <p className="text-xs text-slate-400 mt-5">
                   For self-awareness only, not a clinical diagnosis.
                 </p>
-
               </div>
 
               {/* Animated Score Ring */}
               <div className="flex items-center justify-center shrink-0">
-
                 {loading ? (
-                  <div className="w-44 h-44 rounded-full border border-white/[0.08] bg-white/[0.02] flex flex-col items-center justify-center gap-3">
-                    <div className="w-9 h-9 border-2 border-cyan-400/20 border-t-cyan-400 rounded-full animate-spin" />
-                    <span className="text-xs text-slate-500">Loading score</span>
+                  <div className="w-44 h-44 rounded-full border border-slate-200 bg-slate-50/90 flex flex-col items-center justify-center gap-3">
+                    <div className="w-9 h-9 border-2 border-emerald-200 border-t-[#22C55E] rounded-full animate-spin" />
+                    <span className="text-xs text-slate-500 font-medium">
+                      Loading score
+                    </span>
                   </div>
                 ) : resultsReady ? (
                   <div className="flex flex-col items-center">
-
                     <div
-                      className="relative w-44 h-44 rounded-full flex items-center justify-center transition-transform duration-500 hover:scale-105 animate-[scoreReveal_0.9s_ease-out_both]"
+                      className="relative w-44 h-44 rounded-full flex items-center justify-center shadow-md shadow-emerald-500/10 transition-transform duration-500 hover:scale-105 animate-[scoreReveal_0.9s_ease-out_both]"
                       style={{
-                        background: `conic-gradient(from -90deg, #22D3EE 0%, #3B82F6 ${scorePercentage * 0.7}%, #818CF8 ${scorePercentage}%, rgba(255,255,255,0.06) ${scorePercentage}% 100%)`,
+                        background: `conic-gradient(from -90deg, #22C55E 0%, #16A34A ${
+                          scorePercentage * 0.7
+                        }%, #14B8A6 ${scorePercentage}%, #E2E8F0 ${scorePercentage}% 100%)`,
                       }}
                     >
-                      <div className="absolute inset-[2px] rounded-full bg-cyan-400/10 blur-md" />
-
-                      <div className="absolute inset-[7px] rounded-full bg-[#0D1528] border border-white/[0.06] flex flex-col items-center justify-center shadow-inner">
-
-                        <span className="text-4xl font-bold tracking-tight bg-gradient-to-br from-white via-cyan-100 to-blue-300 bg-clip-text text-transparent">
+                      <div className="absolute inset-[8px] rounded-full bg-white border border-slate-100 flex flex-col items-center justify-center shadow-inner">
+                        <span className="text-4xl font-bold tracking-tight text-slate-900">
                           {assessment.questionnaireScore}
                         </span>
 
@@ -340,111 +360,120 @@ function Dashboard() {
                           out of {assessment.questionnaireTotal}
                         </span>
 
-                        <div className="mt-2 px-2.5 py-1 rounded-full border border-cyan-400/10 bg-cyan-400/[0.06] text-cyan-300 text-[9px] font-semibold tracking-[0.12em]">
+                        <div className="mt-2 px-2.5 py-0.5 rounded-full border border-emerald-200 bg-emerald-50 text-[#16A34A] text-[9px] font-bold tracking-[0.12em]">
                           LATEST SCORE
                         </div>
-
                       </div>
                     </div>
 
-                    <p className="mt-4 text-sm font-medium text-cyan-200">
+                    <p className="mt-4 text-sm font-semibold text-[#16A34A]">
                       {assessment.riskLevel} risk
                     </p>
-
                   </div>
                 ) : (
-                  <div className="w-44 h-44 rounded-full border border-dashed border-cyan-400/20 bg-cyan-400/[0.025] flex flex-col items-center justify-center">
-                    <ClipboardCheck size={34} className="text-cyan-300/70 mb-3" />
-                    <span className="text-sm font-medium text-slate-300">
+                  <div className="w-44 h-44 rounded-full border-2 border-dashed border-emerald-300/80 bg-emerald-50/40 flex flex-col items-center justify-center">
+                    <ClipboardCheck
+                      size={34}
+                      className="text-[#22C55E] mb-3"
+                    />
+                    <span className="text-sm font-semibold text-slate-800">
                       {assessment
                         ? bothAssessmentsCompleted
                           ? 'Analyzing'
                           : 'In progress'
                         : 'Your journey'}
                     </span>
-                    <span className="text-xs text-slate-600 mt-1">
+                    <span className="text-xs text-slate-500 mt-1">
                       {assessment
-                        ? `${Number(optionAssessmentCompleted) + Number(textAssessmentCompleted)} of 2 complete`
+                        ? `${
+                            Number(optionAssessmentCompleted) +
+                            Number(textAssessmentCompleted)
+                          } of 2 complete`
                         : 'Starts here'}
                     </span>
                   </div>
                 )}
-
               </div>
             </div>
           </section>
 
-          {/* Quick Access */}
+          {/* Quick Access Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-11">
-
             <button
               onClick={() => navigate('/assessment/option')}
-              className="group text-left rounded-2xl border border-white/[0.08] bg-[#0C1322]/80 p-5 transition-all duration-300 hover:bg-blue-500/[0.06] hover:border-blue-400/25 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/20 animate-[fadeInUp_0.7s_ease-out_both]"
+              className="group text-left rounded-xl border border-slate-200/90 bg-white/90 backdrop-blur-md p-6 shadow-sm transition-all duration-300 hover:bg-emerald-50/40 hover:border-[#22C55E]/50 hover:-translate-y-1 hover:shadow-lg hover:shadow-emerald-500/10 animate-[fadeInUp_0.7s_ease-out_both]"
             >
               <div className="flex items-start justify-between">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-400/15 to-cyan-400/[0.04] border border-blue-400/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                  <ClipboardCheck size={21} className="text-cyan-300" />
+                <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200/70 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                  <ClipboardCheck size={21} className="text-[#16A34A]" />
                 </div>
-                <ArrowUpRight size={18} className="text-slate-600 transition-all duration-300 group-hover:text-cyan-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRight
+                  size={18}
+                  className="text-slate-400 transition-all duration-300 group-hover:text-[#16A34A] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
               </div>
 
-              <h3 className="text-base font-semibold mt-4">Wellness Assessment</h3>
-              <p className="text-sm text-slate-500 mt-2 leading-6">
+              <h3 className="text-base font-bold text-slate-900 mt-4">
+                Wellness Assessment
+              </h3>
+              <p className="text-sm text-slate-500 mt-1.5 leading-6">
                 Take a moment to reflect on your current well-being.
               </p>
 
-              <div className="mt-4 flex items-center gap-2 text-xs text-cyan-300/70 group-hover:text-cyan-300 transition-colors">
+              <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-[#16A34A] group-hover:text-[#15803D] transition-colors">
                 Get started <span>→</span>
               </div>
             </button>
 
             <button
               onClick={() => navigate('/summary')}
-              className="group text-left rounded-2xl border border-white/[0.08] bg-[#0C1322]/80 p-5 transition-all duration-300 hover:bg-violet-500/[0.06] hover:border-violet-400/25 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-950/20 animate-[fadeInUp_0.85s_ease-out_both]"
+              className="group text-left rounded-xl border border-slate-200/90 bg-white/90 backdrop-blur-md p-6 shadow-sm transition-all duration-300 hover:bg-teal-50/40 hover:border-teal-400/50 hover:-translate-y-1 hover:shadow-lg hover:shadow-teal-500/10 animate-[fadeInUp_0.85s_ease-out_both]"
             >
               <div className="flex items-start justify-between">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-400/15 to-blue-400/[0.04] border border-violet-400/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                  <FileChartColumn size={21} className="text-violet-300" />
+                <div className="w-11 h-11 rounded-xl bg-teal-50 border border-teal-200/70 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                  <FileChartColumn size={21} className="text-teal-600" />
                 </div>
-                <ArrowUpRight size={18} className="text-slate-600 transition-all duration-300 group-hover:text-violet-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRight
+                  size={18}
+                  className="text-slate-400 transition-all duration-300 group-hover:text-teal-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
               </div>
 
-              <h3 className="text-base font-semibold mt-4">Assessment Summary</h3>
-              <p className="text-sm text-slate-500 mt-2 leading-6">
+              <h3 className="text-base font-bold text-slate-900 mt-4">
+                Assessment Summary
+              </h3>
+              <p className="text-sm text-slate-500 mt-1.5 leading-6">
                 Revisit your latest results and reflect on your responses.
               </p>
 
-              <div className="mt-4 flex items-center gap-2 text-xs text-violet-300/70 group-hover:text-violet-300 transition-colors">
+              <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-teal-600 group-hover:text-teal-700 transition-colors">
                 View summary <span>→</span>
               </div>
             </button>
-
           </div>
 
           {/* Educational Resources */}
           <section className="mb-11">
-
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-400 mb-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#16A34A] mb-2">
                   KNOWLEDGE & AWARENESS
                 </p>
-                <h2 className="text-2xl font-bold tracking-tight">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                   Understanding burnout
                 </h2>
-                <p className="text-sm text-slate-500 mt-2">
+                <p className="text-sm text-slate-500 mt-1.5">
                   Recognize the signs and learn ways to take care of yourself.
                 </p>
               </div>
 
-              <div className="hidden sm:flex items-center gap-2 text-xs text-slate-600">
-                <BookOpen size={15} className="text-cyan-400/70" />
+              <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-slate-500">
+                <BookOpen size={15} className="text-[#22C55E]" />
                 Wellness essentials
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
               {infoCards.map((card, index) => {
                 const Icon = card.icon
 
@@ -452,92 +481,90 @@ function Dashboard() {
                   <article
                     key={card.number}
                     style={{ animationDelay: `${index * 100}ms` }}
-                    className={`group relative rounded-2xl border border-white/[0.07] bg-gradient-to-br ${card.accent} p-6 overflow-hidden transition-all duration-300 ${card.border} hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 animate-[fadeInUp_0.7s_ease-out_both]`}
+                    className={`group relative rounded-xl border border-slate-200/90 bg-gradient-to-br ${card.accent} backdrop-blur-md p-6 shadow-sm overflow-hidden transition-all duration-300 ${card.border} hover:-translate-y-1 hover:shadow-md animate-[fadeInUp_0.7s_ease-out_both]`}
                   >
-                    <div className="absolute top-4 right-5 text-5xl font-bold text-white/[0.035] transition-colors duration-300 group-hover:text-white/[0.07]">
+                    <div className="absolute top-3 right-5 text-5xl font-black text-slate-900/[0.04] transition-colors duration-300 group-hover:text-[#22C55E]/[0.12]">
                       {card.number}
                     </div>
 
-                    <div className={`w-11 h-11 rounded-xl ${card.iconBg} border border-white/[0.05] flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3`}>
+                    <div
+                      className={`w-11 h-11 rounded-xl ${card.iconBg} border flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3`}
+                    >
                       <Icon size={21} className={card.iconColor} />
                     </div>
 
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-lg font-bold text-slate-900">
                       {card.title}
                     </h3>
 
-                    <p className="text-sm text-slate-400 leading-7 mt-3">
+                    <p className="text-sm text-slate-600 leading-7 mt-2.5">
                       {card.description}
                     </p>
 
-                    <div className="mt-5 flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-slate-600 group-hover:text-cyan-300/70 transition-colors duration-300">
+                    <div className="mt-5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 group-hover:text-[#16A34A] transition-colors duration-300">
                       <span className="w-5 h-px bg-current" />
                       MindAlign Wellness
                     </div>
                   </article>
                 )
               })}
-
             </div>
           </section>
 
           {/* Wellness Reminders */}
-          <section className="relative rounded-3xl border border-cyan-400/[0.10] bg-gradient-to-br from-[#0D1925] via-[#0B1421] to-[#101225] p-6 md:p-8 mb-6 overflow-hidden">
-
-            <div className="absolute -top-28 right-0 w-64 h-64 bg-cyan-500/[0.06] rounded-full blur-[90px] pointer-events-none" />
+          <section className="relative rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/50 backdrop-blur-md p-6 md:p-8 mb-6 shadow-sm overflow-hidden">
+            <div className="absolute -top-24 right-0 w-64 h-64 bg-[#22C55E]/[0.08] rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative flex items-start gap-4 mb-7">
-              <div className="w-11 h-11 rounded-xl bg-cyan-400/[0.08] border border-cyan-400/10 flex items-center justify-center shrink-0">
-                <HeartPulse size={21} className="text-cyan-300" />
+              <div className="w-11 h-11 rounded-xl bg-white border border-emerald-200/80 shadow-xs flex items-center justify-center shrink-0">
+                <HeartPulse size={21} className="text-[#16A34A]" />
               </div>
 
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300 mb-2">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#16A34A] mb-1.5">
                   A GENTLE REMINDER
                 </p>
-                <h2 className="text-xl font-bold">
+                <h2 className="text-xl font-bold text-slate-900">
                   You deserve time to recharge.
                 </h2>
-                <p className="text-sm text-slate-400 mt-2 leading-6">
-                  Small, realistic steps are worthwhile. You don't have to do everything at once.
+                <p className="text-sm text-slate-600 mt-1.5 leading-6">
+                  Small, realistic steps are worthwhile. You don&apos;t have to do
+                  everything at once.
                 </p>
               </div>
             </div>
 
             <div className="relative grid grid-cols-1 md:grid-cols-3 gap-3">
-
               {wellnessTips.map((tip) => {
                 const Icon = tip.icon
 
                 return (
                   <div
                     key={tip.title}
-                    className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all duration-300 hover:bg-cyan-400/[0.035] hover:border-cyan-400/15"
+                    className="flex items-start gap-3 rounded-xl border border-slate-200/80 bg-white/90 p-4 shadow-2xs transition-all duration-300 hover:border-[#22C55E]/40 hover:shadow-sm"
                   >
-                    <div className="mt-0.5 text-cyan-300/80">
+                    <div className="mt-0.5 text-[#16A34A]">
                       <Icon size={18} />
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-slate-200">
+                      <h3 className="text-sm font-semibold text-slate-900">
                         {tip.title}
                       </h3>
-                      <p className="text-xs text-slate-500 leading-5 mt-1.5">
+                      <p className="text-xs text-slate-500 leading-5 mt-1">
                         {tip.description}
                       </p>
                     </div>
                   </div>
                 )
               })}
-
             </div>
           </section>
 
-          {/* Footer */}
-          <footer className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-5 text-xs text-slate-600">
-            <p>MindAlign · Your space for self-awareness</p>
+          {/* Footer (Matches Login Page Footer) */}
+          <footer className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-t border-slate-200/80 py-6 mt-8 text-xs text-slate-500">
+            <p>MindAlign • Understand Your Mind. Improve Your Journey.</p>
             <p>Take it one step at a time.</p>
           </footer>
-
         </div>
       </main>
 
@@ -583,7 +610,6 @@ function Dashboard() {
           }
         }
       `}</style>
-
     </div>
   )
 }

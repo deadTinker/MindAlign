@@ -1,157 +1,229 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
+// Mock wellness "shows/sessions" matching the Signup backdrop grid
+const BACKDROP_TILES = [
+  { title: 'Deep Sleep', tag: 'Audio Series', gradient: 'from-emerald-100 via-green-50 to-white' },
+  { title: 'Anxiety Reset', tag: '7-Day Course', gradient: 'from-teal-100 via-emerald-50 to-white' },
+  { title: 'Morning Clarity', tag: 'Daily Ritual', gradient: 'from-lime-100 via-green-50 to-white' },
+  { title: 'Focus Flow', tag: 'Soundscapes', gradient: 'from-green-100 via-teal-50 to-white' },
+  { title: 'Letting Go', tag: 'Guided Breath', gradient: 'from-emerald-100 via-slate-50 to-white' },
+  { title: 'Inner Calm', tag: 'Mindfulness', gradient: 'from-green-200/70 via-emerald-50 to-white' },
+  { title: 'Night Wind Down', tag: 'Sleep Stories', gradient: 'from-teal-100 via-cyan-50 to-white' },
+  { title: 'Self Compassion', tag: 'Audio Journal', gradient: 'from-lime-100 via-emerald-50 to-white' },
+  { title: 'Stress Relief', tag: 'Quick Reset', gradient: 'from-emerald-100 via-green-50 to-white' },
+  { title: 'Emotional Balance', tag: 'Masterclass', gradient: 'from-green-100 via-slate-50 to-white' },
+  { title: 'Quiet Mind', tag: 'Meditation', gradient: 'from-teal-100 via-green-50 to-white' },
+  { title: 'Renewal', tag: 'Evening Routine', gradient: 'from-emerald-200/60 via-lime-50 to-white' },
+]
+
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
   const navigate = useNavigate()
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setError('')
+
+    if (!email.trim() || !password) {
+      setError('Please enter both your email address and password.')
+      return
+    }
+
+    setIsLoading(true)
+
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email,
-            password
-          })
-        }
-      )
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
       const data = await response.json()
 
       if (!response.ok) {
-        alert(data.message)
+        setError(data.message || 'Incorrect email or password. Please try again.')
+        setIsLoading(false)
         return
       }
 
-      console.log("Login successful:", data)
-      localStorage.setItem("token", data.token)
-      navigate("/dashboard")
-    } catch (error) {
-      console.error("Login error:", error)
-      alert("Couldn't connect to server")
+      localStorage.setItem('token', data.token)
+      navigate('/dashboard')
+    } catch (err) {
+      console.error('Login error:', err)
+      setError("Couldn't connect to the server. Please try again later.")
+      setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-slate-950 flex items-center justify-center px-4">
-      {/* Background Glow */}
-      <div className="absolute top-[-150px] left-[-150px] w-[400px] h-[400px] bg-blue-600/25 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-[-150px] right-[-150px] w-[400px] h-[400px] bg-cyan-500/15 rounded-full blur-3xl"></div>
-
-      {/* Login Container */}
-      <div className="relative w-full max-w-md">
-        {/* Brand */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold tracking-tight text-white">
-            Mind<span className="text-cyan-400">Align</span>
-          </h1>
-          <p className="text-slate-400 mt-2 text-sm">
-            Understand Your Mind. Improve Your Journey.
-          </p>
+    <div className="min-h-screen bg-white text-slate-900 relative flex flex-col justify-between overflow-x-hidden selection:bg-[#22C55E] selection:text-white">
+      
+      {/* Light Tiled Content Backdrop */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 overflow-hidden opacity-75"
+      >
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 p-3 -rotate-3 scale-110">
+          {BACKDROP_TILES.map((tile, idx) => (
+            <div
+              key={idx}
+              className={`h-44 sm:h-52 rounded bg-gradient-to-br ${tile.gradient} border border-emerald-200/60 p-4 flex flex-col justify-end relative overflow-hidden`}
+            >
+              <span className="text-[10px] uppercase tracking-widest text-emerald-700/60 font-semibold">
+                {tile.tag}
+              </span>
+              <p className="text-lg font-bold tracking-tight text-slate-800/70">
+                {tile.title}
+              </p>
+            </div>
+          ))}
         </div>
+        {/* Soft White Radial + Linear Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/75 to-white/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.4)_0%,rgba(255,255,255,0.95)_100%)]" />
+      </div>
 
-        {/* Login Card */}
-        <div className="bg-white/[0.07] backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl shadow-black/20">
-          {/* Heading */}
-          <div className="mb-7 text-center">
-            <h2 className="text-2xl font-semibold text-white">
-              Welcome Back
-            </h2>
-            <p className="text-slate-400 text-sm mt-2">
-              Sign in to continue to your account
-            </p>
-          </div>
+      {/* Top Navigation Header (Signature Top-Left Logo) */}
+      <header className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 py-6 flex items-center justify-between">
+        <Link to="/" className="inline-flex items-center select-none group">
+          <span className="text-2xl sm:text-4xl font-black tracking-tighter uppercase text-[#22C55E] drop-shadow-[0_2px_10px_rgba(34,197,94,0.2)]">
+            MIND<span className="text-slate-900">ALIGN</span>
+          </span>
+        </Link>
 
-          {/* Email */}
-          <div className="mb-5">
-            <label
-              htmlFor="login-email"
-              className="block text-sm font-medium text-slate-300 mb-2"
-            >
-              Email
-            </label>
-            <input
-              id="login-email"
-              type="email"
-              autoComplete="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3.5 rounded-xl bg-slate-900/60 border border-slate-700 text-white placeholder-slate-500 outline-none transition-all duration-200 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 hover:border-slate-600"
-            />
-          </div>
+        <Link
+          to="/signup"
+          className="px-4 py-1.5 rounded bg-[#22C55E] hover:bg-[#16A34A] text-white text-sm font-semibold shadow-sm transition-colors"
+        >
+          Sign Up
+        </Link>
+      </header>
 
-          {/* Password */}
-          <div className="mb-6">
-            <label
-              htmlFor="login-password"
-              className="block text-sm font-medium text-slate-300 mb-2"
-            >
-              Password
-            </label>
+      {/* Center Clean White Modal Card */}
+      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-6">
+        <div className="w-full max-w-[450px] bg-white/90 backdrop-blur-md sm:px-16 sm:py-12 px-7 py-10 rounded-md border border-slate-200/90 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+          <h1 className="text-[32px] font-bold text-slate-900 tracking-tight mb-2">
+            Sign In
+          </h1>
+          <p className="text-sm text-slate-500 mb-7">
+            Welcome back. Pick up right where you left off.
+          </p>
+
+          {/* Error Alert Box */}
+          {error && (
+            <div className="mb-5 px-4 py-3 rounded bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium leading-snug">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            {/* Floating Label Input: Email */}
+            <div className="relative">
+              <input
+                id="login-email"
+                type="email"
+                autoComplete="email"
+                placeholder=" "
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="peer w-full px-4 pt-6 pb-2 rounded bg-slate-50/90 border border-slate-300 text-slate-900 text-base outline-none transition-colors focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/20 focus:bg-white"
+              />
+              <label
+                htmlFor="login-email"
+                className="pointer-events-none absolute left-4 top-2 text-[11px] text-slate-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-[11px] peer-focus:text-[#16A34A]"
+              >
+                Email address
+              </label>
+            </div>
+
+            {/* Floating Label Input: Password */}
             <div className="relative">
               <input
                 id="login-password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
-                placeholder="Enter your password"
+                placeholder=" "
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleLogin()
-                }}
-                className="w-full px-4 py-3.5 pr-20 rounded-xl bg-slate-900/60 border border-slate-700 text-white placeholder-slate-500 outline-none transition-all duration-200 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 hover:border-slate-600"
+                className="peer w-full px-4 pt-6 pb-2 pr-16 rounded bg-slate-50/90 border border-slate-300 text-slate-900 text-base outline-none transition-colors focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/20 focus:bg-white"
               />
+              <label
+                htmlFor="login-password"
+                className="pointer-events-none absolute left-4 top-2 text-[11px] text-slate-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-[11px] peer-focus:text-[#16A34A]"
+              >
+                Password
+              </label>
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 hover:text-cyan-300 transition-colors"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold uppercase tracking-wider text-slate-500 hover:text-[#16A34A] transition-colors"
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
-          </div>
 
-          {/* Login Button */}
-          <button
-            type="button"
-            onClick={handleLogin}
-            className="w-full py-3.5 rounded-xl bg-cyan-400 text-slate-950 font-semibold shadow-lg shadow-cyan-400/20 transition-all duration-200 hover:bg-cyan-300 hover:shadow-cyan-300/30 hover:-translate-y-0.5 active:translate-y-0"
-          >
-            Login
-          </button>
+            {/* Primary Light Green CTA */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full mt-2 py-3 rounded bg-[#22C55E] hover:bg-[#16A34A] active:bg-[#15803D] text-white font-semibold text-base shadow-md shadow-emerald-500/20 transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Signing In...' : 'Sign In'}
+            </button>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-6">
-            <div className="h-px flex-1 bg-slate-700"></div>
-            <span className="text-xs text-slate-500">OR</span>
-            <div className="h-px flex-1 bg-slate-700"></div>
-          </div>
+            {/* Netflix-style Remember Me & Need Help Row */}
+            <div className="flex items-center justify-between pt-1 text-xs text-slate-500">
+              <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-300 text-[#22C55E] focus:ring-[#22C55E] accent-[#22C55E]"
+                />
+                <span>Remember me</span>
+              </label>
+              <Link
+                to="/forgot-password"
+                className="hover:underline text-slate-500 hover:text-slate-800"
+              >
+                Need help?
+              </Link>
+            </div>
+          </form>
 
-          {/* Signup */}
-          <p className="text-center text-sm text-slate-400">
-            Don't have an account?{' '}
+          {/* Secondary Signup Prompt */}
+          <div className="mt-8 text-base text-slate-600">
+            New to MindAlign?{' '}
             <Link
               to="/signup"
-              className="text-cyan-400 font-semibold hover:text-cyan-300 transition-colors"
+              className="text-[#16A34A] font-semibold hover:underline"
             >
-              Create Account
+              Sign up now.
             </Link>
+          </div>
+
+          <p className="mt-4 text-xs text-slate-400 leading-relaxed">
+            Your mental wellness journey is private and encrypted. Protected by MindAlign Security.
           </p>
         </div>
+      </main>
 
-        {/* Footer */}
-        <p className="text-center text-xs text-slate-600 mt-6">
-          MindAlign • Your Mental Wellness Companion
-        </p>
-      </div>
+      {/* Subtle Bottom Footer Bar */}
+      <footer className="relative z-10 w-full bg-white/80 border-t border-slate-200/80 py-6 px-6 sm:px-12 mt-8">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+          <span>MindAlign • Understand Your Mind. Improve Your Journey.</span>
+          <span>Questions? Support is available 24/7.</span>
+        </div>
+      </footer>
     </div>
   )
 }

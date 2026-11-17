@@ -2,6 +2,48 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
+const BACKDROP_TILES = [
+  { title: "Deep Sleep", tag: "Audio Series", gradient: "from-emerald-100 via-green-50 to-white" },
+  { title: "Anxiety Reset", tag: "7-Day Course", gradient: "from-teal-100 via-emerald-50 to-white" },
+  { title: "Morning Clarity", tag: "Daily Ritual", gradient: "from-lime-100 via-green-50 to-white" },
+  { title: "Focus Flow", tag: "Soundscapes", gradient: "from-green-100 via-teal-50 to-white" },
+  { title: "Letting Go", tag: "Guided Breath", gradient: "from-emerald-100 via-slate-50 to-white" },
+  { title: "Inner Calm", tag: "Mindfulness", gradient: "from-green-200/70 via-emerald-50 to-white" },
+  { title: "Night Wind Down", tag: "Sleep Stories", gradient: "from-teal-100 via-cyan-50 to-white" },
+  { title: "Self Compassion", tag: "Audio Journal", gradient: "from-lime-100 via-emerald-50 to-white" },
+  { title: "Stress Relief", tag: "Quick Reset", gradient: "from-emerald-100 via-green-50 to-white" },
+  { title: "Emotional Balance", tag: "Masterclass", gradient: "from-green-100 via-slate-50 to-white" },
+  { title: "Quiet Mind", tag: "Meditation", gradient: "from-teal-100 via-green-50 to-white" },
+  { title: "Renewal", tag: "Evening Routine", gradient: "from-emerald-200/60 via-lime-50 to-white" },
+];
+
+function BackdropGrid() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 overflow-hidden opacity-45"
+    >
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 p-3 -rotate-3 scale-110">
+        {BACKDROP_TILES.map((tile, idx) => (
+          <div
+            key={idx}
+            className={`h-44 sm:h-52 rounded bg-gradient-to-br ${tile.gradient} border border-emerald-200/60 p-4 flex flex-col justify-end relative overflow-hidden`}
+          >
+            <span className="text-[10px] uppercase tracking-widest text-emerald-700/60 font-semibold">
+              {tile.tag}
+            </span>
+            <p className="text-lg font-bold tracking-tight text-slate-800/70">
+              {tile.title}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/95" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0.96)_100%)]" />
+    </div>
+  );
+}
+
 function Summary() {
   const navigate = useNavigate();
 
@@ -49,11 +91,13 @@ function Summary() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070B16] text-white">
+      <div className="min-h-screen bg-white text-slate-900 relative overflow-x-hidden selection:bg-[#22C55E] selection:text-white">
+        <BackdropGrid />
         <Sidebar />
 
-        <main className="ml-64 min-h-screen flex items-center justify-center">
-          <p className="text-slate-400">
+        <main className="relative z-10 ml-64 min-h-screen flex flex-col items-center justify-center gap-3">
+          <div className="w-9 h-9 border-2 border-emerald-200 border-t-[#22C55E] rounded-full animate-spin" />
+          <p className="text-slate-500 text-sm font-medium">
             Loading your results...
           </p>
         </main>
@@ -63,22 +107,21 @@ function Summary() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#070B16] text-white">
+      <div className="min-h-screen bg-white text-slate-900 relative overflow-x-hidden selection:bg-[#22C55E] selection:text-white">
+        <BackdropGrid />
         <Sidebar />
 
-        <main className="ml-64 min-h-screen flex items-center justify-center p-6">
-          <div className="max-w-md w-full text-center rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8">
-            <h1 className="text-2xl font-bold mb-3">
+        <main className="relative z-10 ml-64 min-h-screen flex items-center justify-center p-6">
+          <div className="max-w-md w-full text-center rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
+            <h1 className="text-2xl font-bold text-slate-900 mb-3">
               Unable to load results
             </h1>
 
-            <p className="text-slate-400 mb-6">
-              {error}
-            </p>
+            <p className="text-slate-500 mb-6">{error}</p>
 
             <button
               onClick={() => navigate("/assessment")}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:brightness-110 transition font-semibold"
+              className="px-6 py-3 rounded-lg bg-[#22C55E] hover:bg-[#16A34A] active:bg-[#15803D] text-white shadow-md shadow-emerald-500/20 transition font-semibold text-sm"
             >
               Take Assessment
             </button>
@@ -126,15 +169,13 @@ function Summary() {
       : "Both assessments have been submitted, but the analysis is not complete yet. Please return to your dashboard and check again shortly.";
 
     return (
-      <div className="min-h-screen bg-[#070B16] text-white relative overflow-hidden">
+      <div className="min-h-screen bg-white text-slate-900 relative overflow-x-hidden selection:bg-[#22C55E] selection:text-white">
+        <BackdropGrid />
         <Sidebar />
 
-        <main className="ml-64 min-h-screen flex items-center justify-center p-6 md:p-10 relative">
-          <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-blue-600/[0.10] rounded-full blur-3xl pointer-events-none" />
-          <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-violet-600/[0.06] rounded-full blur-3xl pointer-events-none" />
-
-          <section className="relative max-w-lg w-full text-center rounded-3xl border border-white/10 bg-white/[0.07] p-8 md:p-10">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
+        <main className="relative z-10 ml-64 min-h-screen flex items-center justify-center p-6 md:p-10">
+          <section className="relative max-w-lg w-full text-center rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8 md:p-10">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 text-[#16A34A]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="28"
@@ -153,28 +194,28 @@ function Summary() {
               </svg>
             </div>
 
-            <p className="text-cyan-300 text-sm font-medium mb-2">
+            <p className="text-[#16A34A] text-xs font-bold uppercase tracking-[0.16em] mb-2">
               MindAlign Assessment
             </p>
-            <h1 className="text-2xl md:text-3xl font-bold mb-3">
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
               {title}
             </h1>
-            <p className="text-slate-400 leading-7 mb-7">
-              {message}
-            </p>
+            <p className="text-slate-600 leading-7 mb-7">{message}</p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-3">
               {missingAssessment && (
                 <button
                   onClick={() => navigate(nextPath)}
-                  className="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition font-semibold"
+                  className="px-6 py-3 rounded-lg bg-[#22C55E] hover:bg-[#16A34A] active:bg-[#15803D] text-white shadow-md shadow-emerald-500/20 transition font-semibold text-sm"
                 >
-                  Complete {missingAssessment === "text" ? "Text-Based" : "Option-Based"} Assessment
+                  Complete{" "}
+                  {missingAssessment === "text" ? "Text-Based" : "Option-Based"}{" "}
+                  Assessment
                 </button>
               )}
               <button
                 onClick={() => navigate("/dashboard")}
-                className="px-6 py-3 rounded-xl bg-white/[0.06] border border-white/10 hover:bg-white/[0.1] transition font-semibold"
+                className="px-6 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-700 hover:bg-white hover:border-[#22C55E] hover:text-[#16A34A] transition font-semibold text-sm"
               >
                 Back to Dashboard
               </button>
@@ -186,19 +227,15 @@ function Summary() {
   }
 
   // Actual ML result
-  const burnoutProbability =
-    (assessment.burnoutProbability ?? 0) * 100;
+  const burnoutProbability = (assessment.burnoutProbability ?? 0) * 100;
 
   const riskLevel = assessment.riskLevel || "Pending";
 
-  const stress =
-    (assessment.nlpScores?.stress ?? 0) * 100;
+  const stress = (assessment.nlpScores?.stress ?? 0) * 100;
 
-  const anxiety =
-    (assessment.nlpScores?.anxiety ?? 0) * 100;
+  const anxiety = (assessment.nlpScores?.anxiety ?? 0) * 100;
 
-  const depression =
-    (assessment.nlpScores?.depression ?? 0) * 100;
+  const depression = (assessment.nlpScores?.depression ?? 0) * 100;
 
   let riskDescription;
 
@@ -212,116 +249,118 @@ function Summary() {
     riskDescription =
       "Your assessment indicates a higher level of burnout-related risk. Consider reviewing your workload, recovery, and sources of stress.";
   } else {
-    riskDescription =
-      "Your assessment is still being processed.";
+    riskDescription = "Your assessment is still being processed.";
   }
 
+  const riskBadgeStyle =
+    riskLevel === "High"
+      ? "bg-rose-50 border-rose-200 text-rose-700"
+      : riskLevel === "Medium"
+        ? "bg-amber-50 border-amber-200 text-amber-700"
+        : "bg-emerald-50 border-emerald-200 text-[#16A34A]";
+
+  const ringColor =
+    riskLevel === "High"
+      ? "#F43F5E"
+      : riskLevel === "Medium"
+        ? "#F59E0B"
+        : "#22C55E";
+
   return (
-    <div className="min-h-screen bg-[#070B16] text-white relative overflow-hidden">
-
-      {/* Background effects */}
-      <div className="fixed top-[-180px] left-[-180px] w-[450px] h-[450px] bg-blue-600/[0.10] rounded-full blur-3xl pointer-events-none" />
-
-      <div className="fixed bottom-[-180px] right-[-180px] w-[450px] h-[450px] bg-violet-600/[0.06] rounded-full blur-3xl pointer-events-none" />
-
+    <div className="min-h-screen bg-white text-slate-900 relative overflow-x-hidden selection:bg-[#22C55E] selection:text-white">
+      <BackdropGrid />
       <Sidebar />
 
-      <main className="ml-64 min-h-screen p-6 md:p-10 relative">
+      <main className="relative z-10 ml-64 min-h-screen p-6 md:p-10">
         <div className="max-w-5xl mx-auto">
-
           {/* Header */}
           <div className="mb-10">
-            <p className="text-cyan-300 text-sm font-medium mb-2">
-              MindAlign Assessment
-            </p>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-200 bg-emerald-50/90 text-[#16A34A] text-[11px] font-semibold tracking-[0.14em] mb-4">
+              MINDALIGN ASSESSMENT
+            </div>
 
-            <h1 className="text-3xl md:text-4xl font-bold">
-              Your Results
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+              Your Results<span className="text-[#22C55E]">.</span>
             </h1>
 
-            <p className="text-slate-400 mt-2">
-              Here's a summary of your latest burnout assessment.
+            <p className="text-slate-500 mt-2">
+              Here&apos;s a summary of your latest burnout assessment.
             </p>
           </div>
 
           {/* Burnout Result */}
-          <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8 md:p-10 mb-6">
-
+          <section className="rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8 md:p-10 mb-6">
             <div className="grid md:grid-cols-2 gap-8 items-center">
-
               {/* Probability */}
               <div>
-                <p className="text-slate-400 text-sm mb-3">
+                <p className="text-[#16A34A] text-xs font-bold uppercase tracking-[0.16em] mb-3">
                   Burnout Probability
                 </p>
 
                 <div className="flex items-baseline gap-2">
-                  <span className="text-6xl font-bold">
+                  <span className="text-6xl font-bold tracking-tight text-slate-900">
                     {burnoutProbability.toFixed(1)}
                   </span>
 
-                  <span className="text-2xl text-slate-500">
+                  <span className="text-2xl font-semibold text-slate-400">
                     %
                   </span>
                 </div>
 
-                <p className="text-slate-400 mt-4 leading-7">
-                  {riskDescription}
-                </p>
+                <p className="text-slate-600 mt-4 leading-7">{riskDescription}</p>
               </div>
 
-              {/* Risk */}
+              {/* Risk Ring */}
               <div className="flex flex-col items-center justify-center">
-
                 <div
-                  className="w-40 h-40 rounded-full flex items-center justify-center shadow-[0_0_45px_rgba(34,211,238,0.10)]"
+                  className="w-40 h-40 rounded-full flex items-center justify-center shadow-md shadow-emerald-500/10"
                   style={{
-                    background: `conic-gradient(from 220deg, #22d3ee 0deg ${Math.min(Math.max(burnoutProbability, 0), 100) * 3.6}deg, rgba(255,255,255,0.08) ${Math.min(Math.max(burnoutProbability, 0), 100) * 3.6}deg 360deg)`,
+                    background: `conic-gradient(from 220deg, ${ringColor} 0deg ${
+                      Math.min(Math.max(burnoutProbability, 0), 100) * 3.6
+                    }deg, #E2E8F0 ${
+                      Math.min(Math.max(burnoutProbability, 0), 100) * 3.6
+                    }deg 360deg)`,
                   }}
                 >
-                  <div className="w-[calc(100%-12px)] h-[calc(100%-12px)] rounded-full bg-[#0D1424] flex flex-col items-center justify-center text-center">
-  <p className="text-4xl font-bold leading-none">
-    {burnoutProbability.toFixed(0)}%
-  </p>
-  <p className="mt-2 text-xs text-slate-400">
-    Risk
-  </p>
-</div>
+                  <div className="w-[calc(100%-14px)] h-[calc(100%-14px)] rounded-full bg-white border border-slate-100 flex flex-col items-center justify-center text-center shadow-inner">
+                    <p className="text-4xl font-bold leading-none text-slate-900">
+                      {burnoutProbability.toFixed(0)}%
+                    </p>
+                    <p className="mt-2 text-xs font-medium text-slate-500">
+                      Risk
+                    </p>
+                  </div>
                 </div>
 
-                <div className="mt-5 px-5 py-2 rounded-full bg-cyan-400/[0.08] border border-cyan-400/20">
-                  <span className="text-cyan-300 font-semibold">
-                    {riskLevel} Risk
-                  </span>
+                <div
+                  className={`mt-5 px-5 py-1.5 rounded-full border ${riskBadgeStyle}`}
+                >
+                  <span className="text-sm font-semibold">{riskLevel} Risk</span>
                 </div>
-
               </div>
-
             </div>
           </section>
 
           {/* Mental Health Indicators */}
-          <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8 mb-6">
-
-            <h2 className="text-xl font-semibold mb-6">
+          <section className="rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8 mb-6">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">
               Mental Health Indicators
             </h2>
 
             <div className="grid md:grid-cols-3 gap-4">
-
               {/* Stress */}
-              <div className="rounded-2xl bg-white/[0.035] border border-cyan-400/15 p-5 transition-colors hover:bg-white/[0.05]">
-                <p className="text-slate-400 text-sm mb-2">
+              <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-5 transition-all hover:border-[#22C55E]/40 hover:bg-white hover:shadow-sm">
+                <p className="text-slate-500 font-medium text-sm mb-2">
                   Stress
                 </p>
 
-                <p className="text-3xl font-bold">
+                <p className="text-3xl font-bold text-slate-900">
                   {stress.toFixed(1)}%
                 </p>
 
-                <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="mt-4 h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-300 rounded-full"
+                    className="h-full bg-gradient-to-r from-[#22C55E] to-[#16A34A] rounded-full"
                     style={{
                       width: `${Math.min(stress, 100)}%`,
                     }}
@@ -330,18 +369,18 @@ function Summary() {
               </div>
 
               {/* Anxiety */}
-              <div className="rounded-2xl bg-white/[0.035] border border-blue-400/15 p-5 transition-colors hover:bg-white/[0.05]">
-                <p className="text-slate-400 text-sm mb-2">
+              <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-5 transition-all hover:border-teal-400/50 hover:bg-white hover:shadow-sm">
+                <p className="text-slate-500 font-medium text-sm mb-2">
                   Anxiety
                 </p>
 
-                <p className="text-3xl font-bold">
+                <p className="text-3xl font-bold text-slate-900">
                   {anxiety.toFixed(1)}%
                 </p>
 
-                <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="mt-4 h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-300 rounded-full"
+                    className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full"
                     style={{
                       width: `${Math.min(anxiety, 100)}%`,
                     }}
@@ -350,132 +389,121 @@ function Summary() {
               </div>
 
               {/* Depression */}
-              <div className="rounded-2xl bg-white/[0.035] border border-violet-400/15 p-5 transition-colors hover:bg-white/[0.05]">
-                <p className="text-slate-400 text-sm mb-2">
+              <div className="rounded-xl bg-slate-50/80 border border-slate-200/80 p-5 transition-all hover:border-lime-500/40 hover:bg-white hover:shadow-sm">
+                <p className="text-slate-500 font-medium text-sm mb-2">
                   Depression
                 </p>
 
-                <p className="text-3xl font-bold">
+                <p className="text-3xl font-bold text-slate-900">
                   {depression.toFixed(1)}%
                 </p>
 
-                <div className="mt-4 h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="mt-4 h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-300 rounded-full"
+                    className="h-full bg-gradient-to-r from-lime-500 to-[#16A34A] rounded-full"
                     style={{
                       width: `${Math.min(depression, 100)}%`,
                     }}
                   />
                 </div>
               </div>
-
             </div>
 
-            <p className="text-xs text-slate-500 mt-5">
-              These indicators are outputs from the text-response analysis
-              and are intended for awareness rather than clinical diagnosis.
+            <p className="text-xs text-slate-400 mt-5">
+              These indicators are outputs from the text-response analysis and
+              are intended for awareness rather than clinical diagnosis.
             </p>
-
           </section>
 
           {/* Interpretation */}
-          <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8 mb-6">
-
-            <h2 className="text-xl font-semibold mb-3">
+          <section className="rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8 mb-6">
+            <h2 className="text-xl font-bold text-slate-900 mb-3">
               Understanding Your Result
             </h2>
 
-            <p className="text-slate-400 leading-7">
+            <p className="text-slate-600 leading-7">
               Your burnout probability is generated using the structured
               assessment responses together with the stress, anxiety, and
-              depression indicators obtained from your text responses.
-              The final risk level is produced by the machine learning
-              models used by MindAlign.
+              depression indicators obtained from your text responses. The
+              final risk level is produced by the machine learning models used
+              by MindAlign.
             </p>
-
           </section>
 
           {/* Recommendations */}
-          <section className="rounded-3xl border border-white/[0.09] bg-[#0D1424]/90 backdrop-blur-xl shadow-2xl p-8 mb-6">
-
-            <h2 className="text-xl font-semibold mb-6">
+          <section className="rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 backdrop-blur-md shadow-sm p-8 mb-6">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">
               What You Can Do
             </h2>
 
             <div className="grid md:grid-cols-2 gap-4">
-
-              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
-                <h3 className="font-semibold mb-2">
+              <div className="rounded-xl bg-white/90 border border-slate-200/80 p-5 shadow-2xs transition-all hover:border-[#22C55E]/40">
+                <h3 className="font-semibold text-slate-900 mb-2">
                   Take regular breaks
                 </h3>
 
-                <p className="text-sm text-slate-400 leading-6">
+                <p className="text-sm text-slate-500 leading-6">
                   Give yourself short periods away from work or study
                   throughout the day.
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
-                <h3 className="font-semibold mb-2">
+              <div className="rounded-xl bg-white/90 border border-slate-200/80 p-5 shadow-2xs transition-all hover:border-[#22C55E]/40">
+                <h3 className="font-semibold text-slate-900 mb-2">
                   Review your workload
                 </h3>
 
-                <p className="text-sm text-slate-400 leading-6">
-                  Identify tasks that can be postponed, delegated, or
-                  broken into smaller steps.
+                <p className="text-sm text-slate-500 leading-6">
+                  Identify tasks that can be postponed, delegated, or broken
+                  into smaller steps.
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
-                <h3 className="font-semibold mb-2">
+              <div className="rounded-xl bg-white/90 border border-slate-200/80 p-5 shadow-2xs transition-all hover:border-[#22C55E]/40">
+                <h3 className="font-semibold text-slate-900 mb-2">
                   Prioritize recovery
                 </h3>
 
-                <p className="text-sm text-slate-400 leading-6">
-                  Make sufficient time for sleep, rest, hobbies, and
-                  activities outside work or academics.
+                <p className="text-sm text-slate-500 leading-6">
+                  Make sufficient time for sleep, rest, hobbies, and activities
+                  outside work or academics.
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5">
-                <h3 className="font-semibold mb-2">
+              <div className="rounded-xl bg-white/90 border border-slate-200/80 p-5 shadow-2xs transition-all hover:border-[#22C55E]/40">
+                <h3 className="font-semibold text-slate-900 mb-2">
                   Talk to someone
                 </h3>
 
-                <p className="text-sm text-slate-400 leading-6">
-                  If stress is becoming difficult to manage, consider
-                  talking with someone you trust or a qualified professional.
+                <p className="text-sm text-slate-500 leading-6">
+                  If stress is becoming difficult to manage, consider talking
+                  with someone you trust or a qualified professional.
                 </p>
               </div>
-
             </div>
-
           </section>
 
           {/* Actions */}
           <div className="flex flex-wrap gap-4">
-
             <button
               onClick={() => navigate("/dashboard")}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:brightness-110 transition font-semibold"
+              className="px-6 py-3 rounded-lg bg-[#22C55E] hover:bg-[#16A34A] active:bg-[#15803D] text-white shadow-md shadow-emerald-500/20 transition font-semibold text-sm"
             >
               Back to Dashboard
             </button>
 
             <button
               onClick={() => navigate("/assessment")}
-              className="px-6 py-3 rounded-xl bg-white/[0.06] border border-white/10 hover:bg-white/[0.1] transition font-semibold"
+              className="px-6 py-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-700 hover:bg-white hover:border-[#22C55E] hover:text-[#16A34A] transition font-semibold text-sm"
             >
               Retake Assessment
             </button>
-
           </div>
 
-          <p className="text-center text-xs text-slate-600 mt-8">
-            MindAlign is an awareness and self-reflection tool and does
-            not provide a medical diagnosis.
+          <p className="text-center text-xs text-slate-400 mt-8">
+            MindAlign is an awareness and self-reflection tool and does not
+            provide a medical diagnosis.
           </p>
-
         </div>
       </main>
     </div>
