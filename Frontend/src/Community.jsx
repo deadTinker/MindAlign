@@ -714,24 +714,258 @@ return (
   )
 }
 function ArticleCard({ article, onOpen, onLike }) {
-  return <article className="group overflow-hidden rounded-3xl border border-white/[0.075] bg-gradient-to-br from-[#101A2B] to-[#0B1220] transition duration-300 hover:-translate-y-1 hover:border-cyan-300/20 hover:shadow-xl hover:shadow-cyan-950/10">
-    {article.coverImage && <button onClick={onOpen} className="block h-48 w-full overflow-hidden"><img src={article.coverImage} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"/></button>}
-    <div className="p-5 sm:p-6"><div className="mb-4 flex items-center justify-between gap-3"><span className="rounded-full border border-cyan-300/15 bg-cyan-300/[0.06] px-3 py-1 text-[10px] font-medium text-cyan-200">{article.category}</span><span className="flex items-center gap-1.5 text-[11px] text-slate-600"><Clock3 size={12}/>{dateLabel(article.createdAt)}</span></div>
-      <button onClick={onOpen} className="block w-full text-left"><h2 className="text-lg font-semibold leading-7 text-slate-100 transition group-hover:text-cyan-100">{article.title}</h2><p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-400">{article.excerpt || article.content}</p><span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-cyan-300/80">Read article <ArrowUpRight size={13}/></span></button>
-      <div className="mt-5 flex items-center justify-between border-t border-white/[0.07] pt-4"><Link to={`/community/user/${article.author?.id}`} onClick={(event) => event.stopPropagation()} className="flex min-w-0 items-center gap-2.5"><Avatar author={article.author}/><div className="min-w-0"><p className="truncate text-xs font-medium text-slate-300">{article.author?.name || 'MindAlign member'}</p><p className="text-[10px] text-slate-600">View contributor</p></div></Link><div className="flex items-center gap-4"><button onClick={onLike} aria-label={article.likedByMe ? 'Unlike article' : 'Like article'} className={`inline-flex items-center gap-1.5 text-xs transition ${article.likedByMe ? 'text-rose-300' : 'text-slate-500 hover:text-rose-300'}`}><Heart size={16} fill={article.likedByMe ? 'currentColor' : 'none'}/>{article.likesCount || 0}</button><button onClick={onOpen} className="inline-flex items-center gap-1.5 text-xs text-slate-500 transition hover:text-cyan-200"><MessageCircle size={16}/>{article.commentsCount || 0}</button></div></div>
+  return (
+    <article className="group overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 shadow-2xs transition duration-300 hover:-translate-y-1 hover:border-[#22C55E]/50 hover:shadow-lg hover:shadow-emerald-500/10">
+      {article.coverImage && (
+        <button onClick={onOpen} className="block h-48 w-full overflow-hidden border-b border-slate-100">
+          <img
+            src={article.coverImage}
+            alt=""
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+          />
+        </button>
+      )}
+      <div className="p-5 sm:p-6">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-[#16A34A]">
+            {article.category}
+          </span>
+          <span className="flex items-center gap-1.5 text-xs text-slate-400">
+            <Clock3 size={13} />
+            {dateLabel(article.createdAt)}
+          </span>
+        </div>
+
+        <button onClick={onOpen} className="block w-full text-left">
+          <h2 className="text-lg font-bold leading-7 text-slate-900 transition group-hover:text-[#16A34A]">
+            {article.title}
+          </h2>
+          <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-500">
+            {article.excerpt || article.content}
+          </p>
+          <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#16A34A]">
+            Read article <ArrowUpRight size={14} />
+          </span>
+        </button>
+
+        <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+          <Link
+            to={`/community/user/${article.author?.id}`}
+            onClick={(event) => event.stopPropagation()}
+            className="flex min-w-0 items-center gap-2.5 group/author"
+          >
+            <Avatar author={article.author} />
+            <div className="min-w-0">
+              <p className="truncate text-xs font-semibold text-slate-800 transition-colors group-hover/author:text-[#16A34A]">
+                {article.author?.name || 'MindAlign member'}
+              </p>
+              <p className="text-[11px] text-slate-400">View contributor</p>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onLike}
+              aria-label={article.likedByMe ? 'Unlike article' : 'Like article'}
+              className={`inline-flex items-center gap-1.5 text-xs font-medium transition ${
+                article.likedByMe
+                  ? 'text-rose-600'
+                  : 'text-slate-500 hover:text-rose-600'
+              }`}
+            >
+              <Heart size={16} fill={article.likedByMe ? 'currentColor' : 'none'} />
+              {article.likesCount || 0}
+            </button>
+            <button
+              onClick={onOpen}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 transition hover:text-[#16A34A]"
+            >
+              <MessageCircle size={16} />
+              {article.commentsCount || 0}
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function CommentThread({
+  comment,
+  replyTo,
+  setReplyTo,
+  replyText,
+  setReplyText,
+  sendComment,
+  toggleLike,
+  deleteComment,
+}) {
+  return (
+    <div className="flex gap-3">
+      <Avatar author={comment.author} />
+      <div className="min-w-0 flex-1">
+        <div className="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-4">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="text-sm font-semibold text-slate-900">
+              {comment.author?.name || 'Member'}
+            </span>
+            <span className="text-[11px] text-slate-400">{dateLabel(comment.createdAt)}</span>
+            {comment.isAuthor && (
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-[#16A34A]">
+                You
+              </span>
+            )}
+          </div>
+          <p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">
+            {comment.content}
+          </p>
+        </div>
+
+        <div className="mt-2 flex items-center gap-4">
+          <button
+            onClick={() => toggleLike(comment.id)}
+            className={`inline-flex items-center gap-1 text-xs font-medium transition ${
+              comment.likedByMe
+                ? 'text-rose-600'
+                : 'text-slate-500 hover:text-rose-600'
+            }`}
+          >
+            <Heart size={13} fill={comment.likedByMe ? 'currentColor' : 'none'} />
+            {comment.likesCount || 0}
+          </button>
+          <button
+            onClick={() => {
+              setReplyTo(replyTo === comment.id ? null : comment.id)
+              setReplyText('')
+            }}
+            className="text-xs font-medium text-slate-500 transition hover:text-[#16A34A]"
+          >
+            Reply
+          </button>
+          {comment.isAuthor && (
+            <button
+              onClick={() => deleteComment(comment.id)}
+              className="text-xs font-medium text-slate-400 transition hover:text-rose-600"
+            >
+              Delete
+            </button>
+          )}
+        </div>
+
+        {replyTo === comment.id && (
+          <form onSubmit={(event) => sendComment(event, comment.id)} className="mt-3 flex gap-2">
+            <input
+              autoFocus
+              value={replyText}
+              onChange={(event) => setReplyText(event.target.value)}
+              placeholder={`Reply to ${comment.author?.name || 'member'}...`}
+              maxLength={2000}
+              className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-slate-50/90 px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-[#22C55E] focus:bg-white focus:ring-2 focus:ring-[#22C55E]/20"
+            />
+            <button
+              disabled={!replyText.trim()}
+              className="rounded-xl bg-[#22C55E] px-3.5 text-white shadow-sm transition hover:bg-[#16A34A] disabled:opacity-40"
+            >
+              <Send size={15} />
+            </button>
+          </form>
+        )}
+
+        {(comment.replies || []).length > 0 && (
+          <div className="mt-4 space-y-3 border-l-2 border-emerald-200/80 pl-4">
+            {comment.replies.map((reply) => (
+              <div key={reply.id} className="flex gap-2.5">
+                <Avatar author={reply.author} size="sm" />
+                <div className="min-w-0 flex-1 rounded-xl border border-slate-200/80 bg-white p-3 shadow-2xs">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-800">
+                      {reply.author?.name || 'Member'}
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      {dateLabel(reply.createdAt)}
+                    </span>
+                  </div>
+                  <p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-600">
+                    {reply.content}
+                  </p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <button
+                      onClick={() => toggleLike(reply.id, comment.id)}
+                      className={`inline-flex items-center gap-1 text-[11px] font-medium transition ${
+                        reply.likedByMe
+                          ? 'text-rose-600'
+                          : 'text-slate-500 hover:text-rose-600'
+                      }`}
+                    >
+                      <Heart size={12} fill={reply.likedByMe ? 'currentColor' : 'none'} />
+                      {reply.likesCount || 0}
+                    </button>
+                    {reply.isAuthor && (
+                      <button
+                        onClick={() => deleteComment(reply.id, comment.id)}
+                        className="text-[11px] font-medium text-slate-400 transition hover:text-rose-600"
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
-  </article>
+  )
 }
 
-function CommentThread({ comment, replyTo, setReplyTo, replyText, setReplyText, sendComment, toggleLike, deleteComment }) {
-  return <div className="flex gap-3"><Avatar author={comment.author}/><div className="min-w-0 flex-1"><div className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4"><div className="mb-2 flex items-center gap-2"><span className="text-sm font-medium text-slate-200">{comment.author?.name || 'Member'}</span><span className="text-[11px] text-slate-600">{dateLabel(comment.createdAt)}</span>{comment.isAuthor && <span className="rounded-full bg-cyan-300/10 px-2 py-0.5 text-[9px] text-cyan-200">You</span>}</div><p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-300">{comment.content}</p></div><div className="mt-2 flex items-center gap-4"><button onClick={() => toggleLike(comment.id)} className={`inline-flex items-center gap-1 text-xs ${comment.likedByMe ? 'text-rose-300' : 'text-slate-500 hover:text-rose-300'}`}><Heart size={13} fill={comment.likedByMe ? 'currentColor' : 'none'}/>{comment.likesCount || 0}</button><button onClick={() => { setReplyTo(replyTo === comment.id ? null : comment.id); setReplyText('') }} className="text-xs text-slate-500 hover:text-cyan-200">Reply</button>{comment.isAuthor && <button onClick={() => deleteComment(comment.id)} className="text-xs text-slate-600 hover:text-rose-300">Delete</button>}</div>
-      {replyTo === comment.id && <form onSubmit={(event) => sendComment(event, comment.id)} className="mt-3 flex gap-2"><input autoFocus value={replyText} onChange={(event) => setReplyText(event.target.value)} placeholder={`Reply to ${comment.author?.name || 'member'}...`} maxLength={2000} className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white outline-none focus:border-cyan-300/30"/><button disabled={!replyText.trim()} className="rounded-xl bg-cyan-400 px-3 text-slate-950 disabled:opacity-40"><Send size={15}/></button></form>}
-      {(comment.replies || []).length > 0 && <div className="mt-4 space-y-3 border-l border-white/10 pl-4">{comment.replies.map((reply) => <div key={reply.id} className="flex gap-2"><Avatar author={reply.author} size="sm"/><div className="min-w-0 flex-1 rounded-xl bg-white/[0.025] p-3"><div className="mb-1 flex items-center gap-2"><span className="text-xs font-medium text-slate-300">{reply.author?.name || 'Member'}</span><span className="text-[10px] text-slate-600">{dateLabel(reply.createdAt)}</span></div><p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-400">{reply.content}</p><div className="mt-2 flex items-center gap-3"><button onClick={() => toggleLike(reply.id, comment.id)} className={`inline-flex items-center gap-1 text-[11px] ${reply.likedByMe ? 'text-rose-300' : 'text-slate-600 hover:text-rose-300'}`}><Heart size={12} fill={reply.likedByMe ? 'currentColor' : 'none'}/>{reply.likesCount || 0}</button>{reply.isAuthor && <button onClick={() => deleteComment(reply.id, comment.id)} className="text-[11px] text-slate-600 hover:text-rose-300">Delete</button>}</div></div></div>)}</div>}
-    </div></div>
+function EmptyState({ onWrite, searching }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 px-6 py-16 text-center">
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 text-[#16A34A]">
+        <BookOpen size={24} />
+      </div>
+      <h2 className="text-lg font-bold text-slate-900">
+        {searching ? 'No stories found' : 'Your community starts here'}
+      </h2>
+      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+        {searching
+          ? 'Try a different search or category to find what you’re looking for.'
+          : 'There are no articles here yet. Be the first to share an experience, idea or perspective.'}
+      </p>
+      {!searching && (
+        <button
+          onClick={onWrite}
+          className="mt-5 rounded-xl bg-[#22C55E] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 transition hover:bg-[#16A34A]"
+        >
+          Write the first article
+        </button>
+      )}
+    </div>
+  )
 }
 
-function EmptyState({ onWrite, searching }) { return <div className="rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center"><div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-300/[0.08] text-cyan-200"><BookOpen size={24}/></div><h2 className="text-lg font-medium">{searching ? 'No stories found' : 'Your community starts here'}</h2><p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">{searching ? 'Try a different search or category to find what you’re looking for.' : 'There are no articles here yet. Be the first to share an experience, idea or perspective.'}</p>{!searching && <button onClick={onWrite} className="mt-5 rounded-xl border border-cyan-300/20 bg-cyan-300/[0.08] px-4 py-2.5 text-sm text-cyan-100 hover:bg-cyan-300/[0.13]">Write the first article</button>}</div> }
-function LoadingState({ label }) { return <div className="flex min-h-64 flex-col items-center justify-center gap-3 text-slate-500"><div className="h-7 w-7 animate-spin rounded-full border-2 border-cyan-300/20 border-t-cyan-300"/><span className="text-sm">{label}...</span></div> }
-function ErrorState({ message, onRetry }) { return <div className="rounded-2xl border border-rose-300/15 bg-rose-300/[0.04] p-6 text-center"><p className="text-sm text-rose-200">{message}</p><button onClick={onRetry} className="mt-4 rounded-lg border border-white/10 px-4 py-2 text-xs text-slate-300 hover:border-white/20">Try again</button></div> }
+function LoadingState({ label }) {
+  return (
+    <div className="flex min-h-64 flex-col items-center justify-center gap-3 text-slate-500">
+      <div className="h-7 w-7 animate-spin rounded-full border-2 border-emerald-200 border-t-[#22C55E]" />
+      <span className="text-sm font-medium">{label}...</span>
+    </div>
+  )
+}
+
+function ErrorState({ message, onRetry }) {
+  return (
+    <div className="rounded-2xl border border-rose-200 bg-rose-50/90 p-6 text-center">
+      <p className="text-sm font-medium text-rose-700">{message}</p>
+      <button
+        onClick={onRetry}
+        className="mt-4 rounded-xl border border-rose-200 bg-white px-4 py-2 text-xs font-semibold text-rose-700 shadow-2xs transition hover:bg-rose-50"
+      >
+        Try again
+      </button>
+    </div>
+  )
+}
 
 export default Community
