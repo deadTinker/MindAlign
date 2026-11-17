@@ -298,7 +298,7 @@ function Profile() {
 
                 <div className="h-28 w-28 overflow-hidden rounded-full border-4 border-emerald-100 bg-emerald-50/50 shadow-md flex items-center justify-center">
                   <img
-                    src={user.profilePhoto?.url || "/favicon.svg"}
+                    src={user.profilePhoto?.url || "/MindAlign.jpg"}
                     alt="Profile"
                     className="h-full w-full object-cover"
                   />
