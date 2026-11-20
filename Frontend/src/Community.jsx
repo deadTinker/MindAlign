@@ -4,7 +4,7 @@ import Sidebar from './Sidebar'
 import {
   ArrowLeft, ArrowUpRight, BookOpen, Clock3, Edit3, Heart, MessageCircle,
   MoreHorizontal, PenLine, Search, Send, Sparkles, TrendingUp, Users, X,
-  Trash2, Image as ImageIcon
+  Trash2, Image as ImageIcon, Bookmark
 } from 'lucide-react'
 
 const API = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/community`
@@ -63,6 +63,8 @@ function Community() {
   const [replyText, setReplyText] = useState('')
   const [notice, setNotice] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [savedArticleIds, setSavedArticleIds] = useState(() => { try { return JSON.parse(localStorage.getItem('ma_community_saved') || '[]') } catch { return [] } })
+  const [showSavedOnly, setShowSavedOnly] = useState(false)
 
   const loadFeed = useCallback(async ({ reset = false, requestedPage = 1 } = {}) => {
     setLoading(true); setError('')
@@ -110,6 +112,19 @@ function Community() {
   }, [searchInput])
 
   const stats = useMemo(() => ({ stories: articles.length, likes: articles.reduce((sum, item) => sum + (item.likesCount || 0), 0) }), [articles])
+  const visibleArticles = useMemo(
+    () => showSavedOnly ? articles.filter((item) => savedArticleIds.includes(item.id)) : articles,
+    [articles, showSavedOnly, savedArticleIds]
+  )
+
+  const toggleSaved = (item) => {
+    setSavedArticleIds((current) => {
+      const next = current.includes(item.id) ? current.filter((id) => id !== item.id) : [...current, item.id]
+      localStorage.setItem('ma_community_saved', JSON.stringify(next))
+      return next
+    })
+  }
+
 
   const toggleLike = async (item) => {
     const previous = item
@@ -275,6 +290,7 @@ return (
                 <label className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-slate-300 bg-slate-50/90 px-4 py-3 transition-colors focus-within:border-[#22C55E] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#22C55E]/20">
                   <Search size={17} className="shrink-0 text-slate-400" />
                   <input
+                    aria-label="Search community articles"
                     value={searchInput}
                     onChange={(event) => setSearchInput(event.target.value)}
                     placeholder="Search stories, ideas and experiences..."
@@ -307,9 +323,17 @@ return (
                     <TrendingUp size={14} /> Popular
                   </button>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setShowSavedOnly((value) => !value)}
+                  aria-pressed={showSavedOnly}
+                  className={`inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-xs font-semibold transition ${showSavedOnly ? 'border-emerald-300 bg-emerald-50 text-emerald-700' : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-200 hover:text-emerald-700'}`}
+                >
+                  <Bookmark size={14} fill={showSavedOnly ? 'currentColor' : 'none'} /> Saved ({savedArticleIds.length})
+                </button>
               </div>
 
-              <div className="mb-7 flex gap-2 overflow-x-auto pb-2">
+              <div className="mb-7 flex gap-2 overflow-x-auto pb-2" role="group" aria-label="Filter articles by topic">
                 {CATEGORIES.map((item) => (
                   <button
                     key={item}
@@ -427,7 +451,15 @@ return (
                       {article.content}
                     </div>
 
-                    <div className="mt-8 flex items-center gap-5 border-y border-slate-200 py-4">
+                    <div className="mt-8 flex flex-wrap items-center gap-5 border-y border-slate-200 py-4">
+                      <button
+                        onClick={() => toggleSaved(article)}
+                        aria-pressed={savedArticleIds.includes(article.id)}
+                        className={`inline-flex items-center gap-2 text-sm font-medium transition ${savedArticleIds.includes(article.id) ? 'text-[#16A34A]' : 'text-slate-500 hover:text-[#16A34A]'}`}
+                      >
+                        <Bookmark size={17} fill={savedArticleIds.includes(article.id) ? 'currentColor' : 'none'} />
+                        {savedArticleIds.includes(article.id) ? 'Saved' : 'Save'}
+                      </button>
                       <button
                         onClick={() => toggleLike(article)}
                         className={`inline-flex items-center gap-2 text-sm font-medium transition ${
@@ -520,10 +552,11 @@ return (
               <ErrorState message={error} onRetry={() => loadFeed({ reset: true })} />
             ) : loading && articles.length === 0 ? (
               <LoadingState label="Loading community" />
-            ) : articles.length === 0 ? (
+            ) : visibleArticles.length === 0 ? (
               <EmptyState
                 onWrite={openNewArticle}
-                searching={Boolean(search || category !== 'All topics')}
+                searching={Boolean(search || category !== 'All topics' || showSavedOnly)}
+                savedOnly={showSavedOnly}
               />
             ) : (
               <>
@@ -531,14 +564,16 @@ return (
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
                     {sort === 'popular' ? 'Popular with the community' : 'Fresh from the community'}
                   </p>
-                  <span className="text-xs text-slate-400">{articles.length} shown</span>
+                  <span className="text-xs text-slate-400">{visibleArticles.length} shown</span>
                 </div>
 
                 <div className="grid gap-5 lg:grid-cols-2">
-                  {articles.map((item) => (
+                  {visibleArticles.map((item) => (
                     <ArticleCard
                       key={item.id}
                       article={item}
+                      saved={savedArticleIds.includes(item.id)}
+                      onSave={() => toggleSaved(item)}
                       onOpen={() => navigate(`/community/${item.id}`)}
                       onLike={() => toggleLike(item)}
                     />
@@ -580,6 +615,8 @@ return (
                     <ArticleCard
                       key={item.id}
                       article={item}
+                      saved={savedArticleIds.includes(item.id)}
+                      onSave={() => toggleSaved(item)}
                       onOpen={() => navigate(`/community/${item.id}`)}
                       onLike={() => toggleLike(item)}
                     />
@@ -611,6 +648,9 @@ return (
                 </h2>
                 <p className="mt-1 text-sm text-slate-500">
                   Share something useful, honest or meaningful.
+                </p>
+                <p className="mt-3 max-w-xl rounded-xl border border-amber-200 bg-amber-50/80 px-3 py-2 text-xs leading-5 text-amber-800">
+                  Articles are published under your MindAlign profile name. Avoid including phone numbers, addresses or other identifying details.
                 </p>
               </div>
               <button
@@ -713,7 +753,7 @@ return (
     </div>
   )
 }
-function ArticleCard({ article, onOpen, onLike }) {
+function ArticleCard({ article, onOpen, onLike, saved = false, onSave = () => {} }) {
   return (
     <article className="group overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 shadow-2xs transition duration-300 hover:-translate-y-1 hover:border-[#22C55E]/50 hover:shadow-lg hover:shadow-emerald-500/10">
       {article.coverImage && (
@@ -763,7 +803,16 @@ function ArticleCard({ article, onOpen, onLike }) {
             </div>
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onSave}
+              aria-label={saved ? 'Remove saved article' : 'Save article'}
+              aria-pressed={saved}
+              className={`inline-flex items-center gap-1.5 text-xs font-medium transition ${saved ? 'text-[#16A34A]' : 'text-slate-500 hover:text-[#16A34A]'}`}
+            >
+              <Bookmark size={15} fill={saved ? 'currentColor' : 'none'} />
+              <span className="hidden sm:inline">{saved ? 'Saved' : 'Save'}</span>
+            </button>
             <button
               onClick={onLike}
               aria-label={article.likedByMe ? 'Unlike article' : 'Like article'}
@@ -919,7 +968,7 @@ function CommentThread({
   )
 }
 
-function EmptyState({ onWrite, searching }) {
+function EmptyState({ onWrite, searching, savedOnly = false }) {
   return (
     <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 px-6 py-16 text-center">
       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 text-[#16A34A]">
@@ -930,7 +979,7 @@ function EmptyState({ onWrite, searching }) {
       </h2>
       <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
         {searching
-          ? 'Try a different search or category to find what you’re looking for.'
+          ? savedOnly ? 'You have not saved any of the articles currently loaded. Browse the feed and save articles to find them here.' : 'Try a different search or category to find what you’re looking for.'
           : 'There are no articles here yet. Be the first to share an experience, idea or perspective.'}
       </p>
       {!searching && (

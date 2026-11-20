@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -9,11 +10,20 @@ import {
   Brain,
   ChevronRight,
   Sparkles,
+  HeartPulse,
+  Moon,
+  Sun,
 } from 'lucide-react'
 
 function Sidebar() {
   const location = useLocation()
   const navigate = useNavigate()
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('ma_theme') === 'dark')
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = darkMode ? 'dark' : 'light'
+    localStorage.setItem('ma_theme', darkMode ? 'dark' : 'light')
+  }, [darkMode])
 
   const handleLogout = () => {
     localStorage.removeItem('token')
@@ -85,6 +95,16 @@ function Sidebar() {
                 className="text-[#22C55E] animate-[fadeIn_0.25s_ease-out]"
               />
             )}
+          </Link>
+
+          {/* Practical Wellness */}
+          <Link to="/wellness" className={linkClass('/wellness')}>
+            {isActive('/wellness') && (
+              <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-[#22C55E]" />
+            )}
+            <HeartPulse size={19} className={iconClass('/wellness')} />
+            <span className="flex-1">Wellness Toolkit</span>
+            {isActive('/wellness') && <ChevronRight size={15} className="text-[#22C55E]" />}
           </Link>
 
           {/* Community */}
@@ -214,6 +234,18 @@ function Sidebar() {
       {/* Bottom Section */}
       <div className="relative mt-auto">
         <div className="mb-4 mx-2 border-t border-slate-200" />
+
+        {/* Theme preference */}
+        <button
+          type="button"
+          onClick={() => setDarkMode((value) => !value)}
+          aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-pressed={darkMode}
+          className="group mb-2 w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 text-sm font-medium border border-transparent transition-all duration-300 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200"
+        >
+          {darkMode ? <Sun size={19} /> : <Moon size={19} />}
+          <span>{darkMode ? 'Light appearance' : 'Dark appearance'}</span>
+        </button>
 
         {/* Logout */}
         <button

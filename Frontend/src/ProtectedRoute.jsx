@@ -1,6 +1,9 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
+
 function ProtectedRoute({ children }) {
   const location = useLocation()
   const [checking, setChecking] = useState(true)
@@ -17,7 +20,7 @@ function ProtectedRoute({ children }) {
 
       try {
         const response = await fetch(
-          'http://localhost:5000/api/assessment/latest',
+          `${API_BASE}/assessment/latest`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

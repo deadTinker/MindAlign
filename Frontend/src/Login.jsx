@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 // Mock wellness "shows/sessions" matching the Signup backdrop grid
 const BACKDROP_TILES = [
   { title: 'Deep Sleep', tag: 'Audio Series', gradient: 'from-emerald-100 via-green-50 to-white' },
@@ -39,7 +41,7 @@ function Login() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,44 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
-const BACKDROP_TILES = [
-  { title: "Deep Sleep", tag: "Audio Series", gradient: "from-emerald-100 via-green-50 to-white" },
-  { title: "Anxiety Reset", tag: "7-Day Course", gradient: "from-teal-100 via-emerald-50 to-white" },
-  { title: "Morning Clarity", tag: "Daily Ritual", gradient: "from-lime-100 via-green-50 to-white" },
-  { title: "Focus Flow", tag: "Soundscapes", gradient: "from-green-100 via-teal-50 to-white" },
-  { title: "Letting Go", tag: "Guided Breath", gradient: "from-emerald-100 via-slate-50 to-white" },
-  { title: "Inner Calm", tag: "Mindfulness", gradient: "from-green-200/70 via-emerald-50 to-white" },
-  { title: "Night Wind Down", tag: "Sleep Stories", gradient: "from-teal-100 via-cyan-50 to-white" },
-  { title: "Self Compassion", tag: "Audio Journal", gradient: "from-lime-100 via-emerald-50 to-white" },
-  { title: "Stress Relief", tag: "Quick Reset", gradient: "from-emerald-100 via-green-50 to-white" },
-  { title: "Emotional Balance", tag: "Masterclass", gradient: "from-green-100 via-slate-50 to-white" },
-  { title: "Quiet Mind", tag: "Meditation", gradient: "from-teal-100 via-green-50 to-white" },
-  { title: "Renewal", tag: "Evening Routine", gradient: "from-emerald-200/60 via-lime-50 to-white" },
-];
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 function BackdropGrid() {
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 overflow-hidden opacity-45"
-    >
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 p-3 -rotate-3 scale-110">
-        {BACKDROP_TILES.map((tile, idx) => (
-          <div
-            key={idx}
-            className={`h-44 sm:h-52 rounded bg-gradient-to-br ${tile.gradient} border border-emerald-200/60 p-4 flex flex-col justify-end relative overflow-hidden`}
-          >
-            <span className="text-[10px] uppercase tracking-widest text-emerald-700/60 font-semibold">
-              {tile.tag}
-            </span>
-            <p className="text-lg font-bold tracking-tight text-slate-800/70">
-              {tile.title}
-            </p>
-          </div>
-        ))}
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/95" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0.96)_100%)]" />
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
+      <div className="absolute -top-40 left-[22%] h-[420px] w-[420px] rounded-full bg-emerald-300/[0.09] blur-[120px]" />
+      <div className="absolute right-[-180px] top-[36%] h-[380px] w-[380px] rounded-full bg-teal-300/[0.07] blur-[110px]" />
     </div>
   );
 }
@@ -63,7 +32,7 @@ function Summary() {
         }
 
         const response = await fetch(
-          "http://localhost:5000/api/assessment/latest",
+          `${API_BASE}/assessment/latest`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -252,6 +221,14 @@ function Summary() {
     riskDescription = "Your assessment is still being processed.";
   }
 
+  const indicatorFocus = [
+    { key: 'stress', label: 'stress', value: stress, action: 'Try a short reset, then choose one task that genuinely needs your attention today.' },
+    { key: 'anxiety', label: 'anxiety', value: anxiety, action: 'Break an uncertain task into a first step you can complete in 10–15 minutes.' },
+    { key: 'depression', label: 'low mood', value: depression, action: 'Choose one low-effort supportive activity and consider checking in with someone you trust.' },
+  ].sort((a, b) => b.value - a.value)[0]
+  const hasTextIndicators = [stress, anxiety, depression].some((value) => Number.isFinite(value) && value > 0)
+  const nextStepFocus = hasTextIndicators ? indicatorFocus : { label: 'your daily routine', action: 'Start with one manageable task, a short break and a realistic recovery window.' }
+
   const riskBadgeStyle =
     riskLevel === "High"
       ? "bg-rose-50 border-rose-200 text-rose-700"
@@ -428,6 +405,19 @@ function Summary() {
               final risk level is produced by the machine learning models used
               by MindAlign.
             </p>
+          </section>
+
+          {/* Personalised next step based on the strongest NLP indicator. */}
+          <section className="mb-6 rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/60 p-6 shadow-sm md:p-8" aria-labelledby="next-step-title">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="max-w-2xl">
+                <p className="text-xs font-bold uppercase tracking-[.16em] text-emerald-700">A practical next step</p>
+                <h2 id="next-step-title" className="mt-2 text-xl font-bold text-slate-900">Give attention to {nextStepFocus.label}</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{nextStepFocus.action}</p>
+                <p className="mt-3 text-xs text-slate-500">{hasTextIndicators ? "This suggestion is based on the highest text-analysis indicator." : "Text-analysis indicators were not available in this result, so this is a general suggestion."} It is a reflection prompt, not a diagnosis or treatment recommendation.</p>
+              </div>
+              <button onClick={() => navigate('/wellness')} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#22C55E] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#16A34A]">Open Wellness Toolkit <span aria-hidden="true">→</span></button>
+            </div>
           </section>
 
           {/* Recommendations */}

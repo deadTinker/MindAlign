@@ -1,18 +1,158 @@
 @import "tailwindcss";
 
-html,
-body,
-#root {
-  min-height: 100%;
-  margin: 0;
-  background-color: #070b16;
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: #f8fbf9;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --ma-green: #22c55e;
+  --ma-green-dark: #15803d;
+  --ma-ink: #0f172a;
+  --ma-muted: #64748b;
+  --ma-border: #e2e8f0;
 }
 
-html {
-  overscroll-behavior-y: none;
+html, body, #root { min-height: 100%; margin: 0; }
+html { scroll-behavior: smooth; overscroll-behavior-y: none; }
+body { min-height: 100vh; overflow-x: hidden; background: #f8fbf9; }
+::selection { background: rgba(34,197,94,.2); color: #14532d; }
+:focus-visible { outline: 3px solid rgba(34,197,94,.42); outline-offset: 2px; }
+
+/* Consistent, restrained motion across the existing application. */
+@keyframes ma-page-enter { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ma-soft-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } 50% { box-shadow: 0 0 0 5px rgba(34,197,94,.08); } }
+main { animation: ma-page-enter .42s cubic-bezier(.2,.7,.2,1) both; }
+
+/* Existing card layouts gain depth and clearer hover/focus feedback without
+   changing their content, routes, data flow, or green-and-white visual identity. */
+article, main section, main [class*="rounded-xl border"], main [class*="rounded-2xl border"] {
+  transition: border-color .22s ease, box-shadow .22s ease, transform .22s ease;
+}
+main button:not(:disabled) { transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+main button:active:not(:disabled) { transform: translateY(1px) scale(.99); }
+main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+main textarea, main select {
+  transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+main input:focus, main textarea:focus, main select:focus {
+  border-color: #86efac !important;
+  box-shadow: 0 0 0 4px rgba(34,197,94,.10);
+  outline: none;
 }
 
-body {
-  min-height: 100vh;
-  overflow-x: hidden;
+/* Sidebar polish. */
+aside { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+aside a { -webkit-tap-highlight-color: transparent; }
+aside a:hover { transform: translateX(2px); }
+aside button { -webkit-tap-highlight-color: transparent; }
+
+/* Subtle, consistent scrollbar. */
+* { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+*::-webkit-scrollbar { width: 9px; height: 9px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: #cbd5e1; border: 2px solid transparent; background-clip: padding-box; border-radius: 999px; }
+*::-webkit-scrollbar-thumb:hover { background: #94a3b8; border: 2px solid transparent; background-clip: padding-box; }
+
+/* Responsive layout: retain the existing desktop sidebar, make it a compact
+   top navigation on narrow screens, and release the content's desktop offset. */
+@media (max-width: 767px) {
+  aside.fixed.left-0.top-0 {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 30 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 12px 14px !important;
+    overflow: visible !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 5px 22px rgba(15,23,42,.045) !important;
+  }
+  aside .relative.px-2.mb-10 { margin-bottom: 10px !important; }
+  aside .relative.mt-7 { margin-top: 10px !important; }
+  aside .relative.mt-auto { margin-top: 10px !important; }
+  aside nav, aside .ml-3.pl-3 { flex-direction: row !important; flex-wrap: wrap !important; margin-left: 0 !important; padding-left: 0 !important; border-left: 0 !important; }
+  aside > div { max-width: 100%; }
+  aside nav a, aside .ml-3.pl-3 a { width: auto !important; padding: 8px 10px !important; }
+  aside .relative.mt-7 > div:first-child, aside .relative > .flex.items-center.gap-2.px-4.mb-3 { margin-bottom: 5px !important; }
+  aside .relative.mt-auto > .mb-4 { margin-bottom: 7px !important; }
+  main.ml-64, main.relative.z-10.ml-64, main.relative.z-10.ml-64.min-h-screen { margin-left: 0 !important; }
+  main { min-height: calc(100vh - 70px); }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+
+/* MindAlign appearance system. Theme preference is stored locally by Sidebar. */
+:root { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; background: #0b1511; }
+html[data-theme="dark"] body { background: #0b1511 !important; color: #e5eee8; }
+html[data-theme="dark"] aside,
+html[data-theme="dark"] [class~="bg-white"],
+html[data-theme="dark"] [class*="bg-white/"],
+html[data-theme="dark"] [class*="bg-slate-50"],
+html[data-theme="dark"] [class*="bg-slate-100"] { background-color: #122019 !important; }
+html[data-theme="dark"] [class*="bg-gradient-to-br"],
+html[data-theme="dark"] [class*="bg-gradient-to-r"] { background-image: linear-gradient(135deg, rgba(20, 83, 45, .24), rgba(15, 23, 42, .12)) !important; }
+html[data-theme="dark"] [class*="text-slate-900"],
+html[data-theme="dark"] [class*="text-slate-800"],
+html[data-theme="dark"] [class*="text-slate-700"] { color: #e5eee8 !important; }
+html[data-theme="dark"] [class*="text-slate-600"],
+html[data-theme="dark"] [class*="text-slate-500"] { color: #a8b9ae !important; }
+html[data-theme="dark"] [class*="text-slate-400"] { color: #82958a !important; }
+html[data-theme="dark"] [class*="border-slate-"],
+html[data-theme="dark"] [class*="border-emerald-"],
+html[data-theme="dark"] [class*="border-teal-"],
+html[data-theme="dark"] [class*="border-lime-"] { border-color: #294236 !important; }
+html[data-theme="dark"] input, html[data-theme="dark"] textarea, html[data-theme="dark"] select { background-color: #17291f !important; color: #e5eee8 !important; border-color: #385444 !important; }
+html[data-theme="dark"] input::placeholder, html[data-theme="dark"] textarea::placeholder { color: #82958a !important; }
+html[data-theme="dark"] aside { border-color: #294236 !important; }
+html[data-theme="dark"] aside a:hover, html[data-theme="dark"] aside button:hover { background-color: #1b3427 !important; }
+html[data-theme="dark"] main { color: #e5eee8; }
+html[data-theme="dark"] [class*="shadow-"] { --tw-shadow-color: rgb(0 0 0 / .18); }
+html[data-theme="dark"] .text-white { color: #fff !important; }
+html[data-theme="dark"] .bg-\[\#22C55E\] { background-color: #15803d !important; }
+@media (max-width: 767px) {
+  html[data-theme="dark"] aside { background: #101d16 !important; }
+}
+
+html[data-theme="dark"] [class*="bg-emerald-50"],
+html[data-theme="dark"] [class*="bg-teal-50"],
+html[data-theme="dark"] [class*="bg-lime-50"],
+html[data-theme="dark"] [class*="bg-amber-50"],
+html[data-theme="dark"] [class*="bg-rose-50"] { background-color: #193326 !important; }
+html[data-theme="dark"] [class*="bg-emerald-100"],
+html[data-theme="dark"] [class*="bg-teal-100"],
+html[data-theme="dark"] [class*="bg-lime-100"] { background-color: #214331 !important; }
+html[data-theme="dark"] [class*="text-emerald-800"],
+html[data-theme="dark"] [class*="text-emerald-900"],
+html[data-theme="dark"] [class*="text-teal-800"],
+html[data-theme="dark"] [class*="text-rose-700"],
+html[data-theme="dark"] [class*="text-amber-700"] { color: #b7e6c8 !important; }
+html[data-theme="dark"] [class*="ring-white"] { --tw-ring-color: #294236; }
+html[data-theme="dark"] hr { border-color: #294236; }
+
+/* Keep pages with a fixed light canvas in sync with the selected appearance.
+   Wellness previously hard-coded #f8fafc on its outer wrapper, so dark mode
+   produced a light content canvas beside a dark sidebar and dark cards. */
+html[data-theme="dark"] [class*="bg-[#f8fafc]"],
+html[data-theme="dark"] [class*="bg-[#f8fbf9]"] {
+  background-color: #0b1511 !important;
+}
+
+/* The wellness workspace should read as one continuous surface in dark mode. */
+html[data-theme="dark"] main {
+  background-color: transparent;
+  color: #e5eee8;
+}
+
+/* Improve contrast for muted copy and form labels on the dark wellness canvas. */
+html[data-theme="dark"] main [class*="text-slate-500"] { color: #a8b9ae !important; }
+html[data-theme="dark"] main [class*="text-slate-400"] { color: #91a69a !important; }
+html[data-theme="dark"] main [class*="text-slate-600"] { color: #b8c8be !important; }

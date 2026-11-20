@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import Sidebar from "./Sidebar";
 import { Camera, User, Mail, Lock, ArrowRight, X, ShieldCheck } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth`;
 
 function Profile() {
   const [user, setUser] = useState({

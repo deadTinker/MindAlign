@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
 import Sidebar from './Sidebar'
 import {
   ArrowUpRight,
@@ -13,29 +14,29 @@ import {
   Users,
   ClipboardCheck,
   FileChartColumn,
+  CalendarDays,
+  Sparkles,
 } from 'lucide-react'
 
-// Subtle wellness backdrop tiles matching the Login & Signup aesthetic
-const BACKDROP_TILES = [
-  { title: 'Deep Sleep', tag: 'Audio Series', gradient: 'from-emerald-100 via-green-50 to-white' },
-  { title: 'Anxiety Reset', tag: '7-Day Course', gradient: 'from-teal-100 via-emerald-50 to-white' },
-  { title: 'Morning Clarity', tag: 'Daily Ritual', gradient: 'from-lime-100 via-green-50 to-white' },
-  { title: 'Focus Flow', tag: 'Soundscapes', gradient: 'from-green-100 via-teal-50 to-white' },
-  { title: 'Letting Go', tag: 'Guided Breath', gradient: 'from-emerald-100 via-slate-50 to-white' },
-  { title: 'Inner Calm', tag: 'Mindfulness', gradient: 'from-green-200/70 via-emerald-50 to-white' },
-  { title: 'Night Wind Down', tag: 'Sleep Stories', gradient: 'from-teal-100 via-cyan-50 to-white' },
-  { title: 'Self Compassion', tag: 'Audio Journal', gradient: 'from-lime-100 via-emerald-50 to-white' },
-  { title: 'Stress Relief', tag: 'Quick Reset', gradient: 'from-emerald-100 via-green-50 to-white' },
-  { title: 'Emotional Balance', tag: 'Masterclass', gradient: 'from-green-100 via-slate-50 to-white' },
-  { title: 'Quiet Mind', tag: 'Meditation', gradient: 'from-teal-100 via-green-50 to-white' },
-  { title: 'Renewal', tag: 'Evening Routine', gradient: 'from-emerald-200/60 via-lime-50 to-white' },
-]
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 function Dashboard() {
   const navigate = useNavigate()
 
   const [assessment, setAssessment] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [wellnessSnapshot, setWellnessSnapshot] = useState(() => {
+    try { const value = JSON.parse(localStorage.getItem('ma_wellness_checkins') || '[]'); return Array.isArray(value) ? value : [] } catch { return [] }
+  })
+
+  useEffect(() => {
+    const refreshSnapshot = () => {
+      try { const value = JSON.parse(localStorage.getItem('ma_wellness_checkins') || '[]'); setWellnessSnapshot(Array.isArray(value) ? value : []) } catch { setWellnessSnapshot([]) }
+    }
+    window.addEventListener('storage', refreshSnapshot)
+    window.addEventListener('focus', refreshSnapshot)
+    return () => { window.removeEventListener('storage', refreshSnapshot); window.removeEventListener('focus', refreshSnapshot) }
+  }, [])
 
   useEffect(() => {
     const fetchLatestAssessment = async () => {
@@ -48,7 +49,7 @@ function Dashboard() {
         }
 
         const response = await fetch(
-          'http://localhost:5000/api/assessment/latest',
+          `${API_BASE}/assessment/latest`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -63,9 +64,6 @@ function Dashboard() {
 
         const data = await response.json()
         setAssessment(data.assessment)
-        console.log('Latest assessment:', data.assessment)
-        console.log('Questionnaire score:', data.assessment?.questionnaireScore)
-        console.log('Questionnaire total:', data.assessment?.questionnaireTotal)
       } catch (error) {
         console.error('Error fetching assessment:', error)
       } finally {
@@ -75,6 +73,17 @@ function Dashboard() {
 
     fetchLatestAssessment()
   }, [])
+
+  const localToday = (() => { const date = new Date(); return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10) })()
+  const todayCheckin = wellnessSnapshot.find((entry) => entry.date === localToday)
+  const checkinCount = wellnessSnapshot.length
+  const dailySuggestion = !todayCheckin
+    ? 'Take 60 seconds to record how today is going.'
+    : todayCheckin.stress >= 4
+      ? 'Your stress check-in was high. Choose one priority and give yourself a short reset.'
+      : todayCheckin.energy <= 2 || todayCheckin.sleep <= 2
+        ? 'Your energy or sleep rating was low. Keep today’s plan realistic and protect some recovery time.'
+        : 'You have checked in today. Keep your next step small and sustainable.'
 
   const scorePercentage =
     assessment && Number(assessment.questionnaireTotal) > 0
@@ -175,29 +184,10 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 relative overflow-x-hidden selection:bg-[#22C55E] selection:text-white">
-      {/* Light Tiled Content Backdrop (Matches Login Page) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 overflow-hidden opacity-45"
-      >
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 p-3 -rotate-3 scale-110">
-          {BACKDROP_TILES.map((tile, idx) => (
-            <div
-              key={idx}
-              className={`h-44 sm:h-52 rounded bg-gradient-to-br ${tile.gradient} border border-emerald-200/60 p-4 flex flex-col justify-end relative overflow-hidden`}
-            >
-              <span className="text-[10px] uppercase tracking-widest text-emerald-700/60 font-semibold">
-                {tile.tag}
-              </span>
-              <p className="text-lg font-bold tracking-tight text-slate-800/70">
-                {tile.title}
-              </p>
-            </div>
-          ))}
-        </div>
-        {/* Soft White Radial + Linear Vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-white/95" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0.96)_100%)]" />
+      {/* Quiet ambient background keeps attention on the student's next step. */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 left-[18%] h-[420px] w-[420px] rounded-full bg-emerald-300/[0.10] blur-[120px]" />
+        <div className="absolute right-[-160px] top-[38%] h-[360px] w-[360px] rounded-full bg-teal-300/[0.08] blur-[110px]" />
       </div>
 
       <Sidebar />
@@ -393,6 +383,33 @@ function Dashboard() {
                     </span>
                   </div>
                 )}
+              </div>
+            </div>
+          </section>
+
+          {/* Daily pulse: connects the dashboard to the practical wellness tools. */}
+          <section className="mb-8 grid gap-4 lg:grid-cols-[1.4fr_.8fr]" aria-labelledby="daily-pulse-title">
+            <div className="rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/70 p-6 shadow-sm md:p-7">
+              <div className="flex items-start gap-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-white text-emerald-700"><Sparkles size={20} /></div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-bold uppercase tracking-[.16em] text-emerald-700">A small next step</p>
+                  <h2 id="daily-pulse-title" className="mt-1 text-lg font-bold text-slate-900">Your daily pulse</h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{dailySuggestion}</p>
+                  <button onClick={() => navigate('/wellness')} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#22C55E] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#16A34A]">{todayCheckin ? 'Open wellness toolkit' : 'Complete daily check-in'} <ArrowUpRight size={16}/></button>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><CalendarDays size={18}/></div>
+                <p className="mt-4 text-2xl font-bold tabular-nums text-slate-900">{checkinCount}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-500">Check-ins saved on this device</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50 text-teal-700"><HeartPulse size={18}/></div>
+                <p className="mt-4 text-sm font-bold text-slate-900">{todayCheckin ? 'Recorded' : 'Not yet today'}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-500">Daily check-in status</p>
               </div>
             </div>
           </section>

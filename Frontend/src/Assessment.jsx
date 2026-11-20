@@ -10,6 +10,9 @@ import {
 } from 'lucide-react'
 import Sidebar from './Sidebar'
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
+
 const questionConfig = [
   {
     feature: 'study_hours_per_day',
@@ -136,6 +139,7 @@ function Assessment() {
   const location = useLocation()
   const isTextAssessment = location.pathname.endsWith('/text')
   const isRetake = new URLSearchParams(location.search).get('retake') === 'true'
+  const draftKey = `mindalign_draft_${isTextAssessment ? 'text' : 'option'}${isRetake ? '_retake' : ''}`
   const questions = isTextAssessment ? textQuestions : questionConfig
   const totalQuestions = questions.length
 
@@ -150,6 +154,7 @@ function Assessment() {
   const [submitting, setSubmitting] = useState(false)
   const [checkingStatus, setCheckingStatus] = useState(true)
   const [error, setError] = useState('')
+  const [draftLoaded, setDraftLoaded] = useState(false)
 
   // Re-check saved completion status whenever the assessment route changes.
   useEffect(() => {
@@ -164,6 +169,7 @@ function Assessment() {
       setTextResponses(Array(textQuestions.length).fill(''))
       setMissingAssessment(isTextAssessment ? 'option' : 'text')
       setError('')
+      setDraftLoaded(false)
 
       try {
         const token = localStorage.getItem('token')
@@ -172,7 +178,7 @@ function Assessment() {
           return
         }
 
-        const response = await fetch('http://localhost:5000/api/assessment/latest', {
+        const response = await fetch(`${API_BASE}/assessment/latest`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -236,8 +242,35 @@ function Assessment() {
     }
   }, [location.pathname, isTextAssessment, isRetake])
 
+  // Restore an unfinished draft only after the server status check has completed.
+  useEffect(() => {
+    if (checkingStatus || draftLoaded || (completed && !isRetake)) return
+    try {
+      const draft = JSON.parse(localStorage.getItem(draftKey) || 'null')
+      if (draft) {
+        if (Number.isInteger(draft.currentQuestion)) setCurrentQuestion(Math.max(0, Math.min(draft.currentQuestion, totalQuestions - 1)))
+        if (Array.isArray(draft.answers) && draft.answers.length === questionConfig.length) setAnswers(draft.answers)
+        if (Array.isArray(draft.textResponses) && draft.textResponses.length === textQuestions.length) setTextResponses(draft.textResponses)
+      }
+    } catch (draftError) {
+      console.warn('Could not restore assessment draft:', draftError)
+    } finally {
+      setDraftLoaded(true)
+    }
+  }, [checkingStatus, draftLoaded, completed, isRetake, draftKey, totalQuestions])
+
+  useEffect(() => {
+    if (!draftLoaded || checkingStatus || completed || submitting) return
+    localStorage.setItem(draftKey, JSON.stringify({
+      currentQuestion, answers, textResponses, updatedAt: new Date().toISOString(),
+    }))
+  }, [draftLoaded, checkingStatus, completed, submitting, draftKey, currentQuestion, answers, textResponses])
+
   const questionIndex = Math.min(currentQuestion, totalQuestions - 1)
   const progress = ((questionIndex + 1) / totalQuestions) * 100
+  const answeredCount = isTextAssessment
+    ? textResponses.filter((response) => response.trim().length > 0).length
+    : answers.filter((answer) => answer !== null && answer !== undefined).length
   const currentAnswered = isTextAssessment
     ? (textResponses[questionIndex] ?? '').trim().length > 0
     : answers[questionIndex] !== null && answers[questionIndex] !== undefined
@@ -281,7 +314,7 @@ function Assessment() {
             ...(isRetake ? { retakeAssessment: true } : {}),
           }
 
-      const response = await fetch('http://localhost:5000/api/assessment', {
+      const response = await fetch(`${API_BASE}/assessment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -307,6 +340,7 @@ function Assessment() {
         })
       )
 
+      localStorage.removeItem(draftKey)
       setBothCompleted(data.completed === true)
       setMissingAssessment(data.missingAssessment || (isTextAssessment ? 'option' : 'text'))
       setCompleted(true)
@@ -452,17 +486,20 @@ function Assessment() {
             </h1>
             <p className="mt-3 max-w-2xl leading-7 text-slate-500">
               {isTextAssessment
-                ? 'Share what your recent experiences have been like. Your responses help complete your overall assessment.'
-                : 'Answer based on your recent experiences. There are no right or wrong answers.'}
+                ? 'Share what your recent experiences have been like. Your responses help complete your overall assessment. You can leave and return to this draft on this device.'
+                : 'Answer based on your recent experiences. There are no right or wrong answers. Your unfinished responses are saved on this device.'}
             </p>
           </header>
 
           <div className="mb-7">
             <div className="mb-3 flex items-center justify-between text-sm">
               <span className="text-slate-500 font-medium">
-                Question {questionIndex + 1} of {totalQuestions}
+                Question {questionIndex + 1} of {totalQuestions} <span className="ml-2 text-xs text-slate-400">· {answeredCount} answered</span>
               </span>
-              <span className="font-bold text-[#16A34A]">{Math.round(progress)}%</span>
+              <span className="flex items-center gap-3">
+                <span className="text-xs font-medium text-slate-400" aria-live="polite">{draftLoaded ? 'Draft saved on this device' : 'Preparing your assessment'}</span>
+                <span className="font-bold text-[#16A34A]">{Math.round(progress)}%</span>
+              </span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-slate-100 border border-slate-200/60">
               <div

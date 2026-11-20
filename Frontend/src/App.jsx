@@ -9,6 +9,7 @@ import Assessment from './Assessment'
 import Summary from './Summary'
 import ProtectedRoute from './ProtectedRoute'
 import Community from './Community'
+import Wellness from './Wellness'
 
 function App() {
   return (
@@ -28,6 +29,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/wellness"
+          element={
+            <ProtectedRoute>
+              <Wellness />
             </ProtectedRoute>
           }
         />

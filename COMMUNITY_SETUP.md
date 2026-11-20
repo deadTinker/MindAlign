@@ -43,3 +43,9 @@ The frontend defaults to `http://localhost:5000/api`. To change it, set `VITE_AP
 - MongoDB collections are created automatically by Mongoose when the first article/comment is written; no manual migration is required.
 - Article content is stored as plain text and rendered as text, not interpreted as HTML.
 - Only authenticated users can view or interact with the hub, matching the app's current protected-route model.
+
+## Practical Wellness Toolkit
+
+The frontend includes a protected `/wellness` page, accessible from the sidebar as **Wellness Toolkit**. It adds daily self-check-ins, a suggested 7-day self-care plan, a configurable focus/break timer, local progress visualizations, short stress-relief exercises, a workload planner, a private reflection journal, and interactive learning scenarios.
+
+Wellness entries are stored in the browser's `localStorage` under `ma_wellness_*` keys. They are not sent to the backend or synchronized across devices. Users should avoid entering sensitive information on shared devices. These features are educational self-reflection tools and are not diagnostic or treatment services.
